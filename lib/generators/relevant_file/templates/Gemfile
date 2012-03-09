@@ -6,6 +6,7 @@ gem 'configatron', '2.8.3'
 gem 'airbrake', '~> 3.0.4'
 gem 'factory_girl_rails', '1.2.0'
 gem 'jquery-rails', '1.0.14'
+gem 'therubyracer'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -27,4 +28,7 @@ group "development", "test" do
   gem 'guard-rspec', '~> 0.5.0', :require => false
   gem 'growl', '~> 1.0.3', :require => false
   gem 'rb-fsevent', '~> 0.4.2', :require => false
+  gem 'capistrano', '~> 2.11.2'
+  gem 'capistrano-ext', '1.2.1', :require => nil
+  gem 'capistrano_colors'
 end
