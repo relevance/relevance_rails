@@ -78,18 +78,21 @@ Dir['config/deploy/recipes/*.rb'].sort.each { |f| eval(File.read(f)) }
   def create_database_example_yml
     create_file 'config/database.example.yml', <<-DATABASE_CONFIG
 development:
-  adapter: mysql
+  adapter: mysql2
+  encoding: utf8
   database: #{name}_development
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  adapter: mysql
+  adapter: mysql2
+  encoding: utf8
   database: #{name}_test
 
 production:
-  adapter: mysql
+  adapter: mysql2
+  encoding: utf8
   database: #{name}_production
     DATABASE_CONFIG
   end
