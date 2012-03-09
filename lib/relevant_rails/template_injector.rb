@@ -3,5 +3,3 @@ unless ARGV.any? =~ /^-d$/ then
   ARGV << '-m'
   ARGV << template
 end
-
-puts ARGV
