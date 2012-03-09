@@ -15,7 +15,7 @@ run 'rm app/assets/images/rails.png'
 run 'rm app/views/layouts/application.html.erb'
 
 generate(:relevant_gemfile)
-generate(:relevant_default)
+generate(:relevant_file)
 
 run "rvm #{RVM_RUBY} gemset create #{RVM_GEMSET}"
 rvm_run "gem install bundler"
