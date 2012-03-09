@@ -4,6 +4,10 @@ class RelevantFileGenerator < Rails::Generators::Base
 
   source_root File.expand_path("../templates", __FILE__)
 
+  def copy_gemfile
+    copy_file "Gemfile", "Gemfile"
+  end
+
   def create_readme_markdown
     create_file "README.markdown", <<-README
 # #{app_name}
