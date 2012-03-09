@@ -33,4 +33,11 @@ LAYOUT
     create_file ".rvmrc", "rvm ree-1.8.7-2012.02@#{app_name}"
   end
 
+  def create_rspec_dir
+    create_directory 'spec'
+  end
+
+  def copy_spec_helper
+    copy_file 'spec_helper.rb', 'spec/spec_helper.rb'
+  end
 end
