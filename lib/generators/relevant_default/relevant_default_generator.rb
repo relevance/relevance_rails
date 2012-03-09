@@ -1,4 +1,4 @@
-class RelevantDefaultFilesGenerator < Rails::Generators::Base
+class RelevantDefaultGenerator < Rails::Generators::Base
 
   desc "This generator creates a number of default Rails files."
 
