@@ -15,9 +15,10 @@ Rails 3 projects with every fiddly bit convened rather than configured. Includes
 Getting Started
 ---------------
 
-````gem install relevance_rails
+````sh
+    gem install relevance_rails
     relevance_rails new <your new project>
-`````
+````
 
 Caveats
 -------
