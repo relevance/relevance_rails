@@ -1,3 +1,3 @@
-module RelevantRails
+module RelevanceRails
   VERSION = "0.0.1"
 end

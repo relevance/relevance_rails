@@ -1,4 +1,4 @@
-Relevant Rails
+Relevance Rails
 ==============
 
 Yo dawg, I heard you like automation, so I automated your automation so you can autopilot while you autopilot!
@@ -15,8 +15,8 @@ Rails 3 projects with every fiddly bit convened rather than configured. Includes
 Getting Started
 ---------------
 
-gem install relevant_rails
-relevant_rails new <your new project>
+gem install relevance_rails
+relevance_rails new <your new project>
 
 Caveats
 -------

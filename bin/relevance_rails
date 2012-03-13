@@ -15,7 +15,7 @@ if ARGV.first =~ /^_(.*)_$/ and Gem::Version.correct? $1 then
   ARGV.shift
 end
 
-require 'relevant_rails/template_injector'
+require 'relevance_rails/template_injector'
 
 gem 'railties', version
 load Gem.bin_path('railties', 'rails', version)

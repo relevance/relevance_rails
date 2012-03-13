@@ -1,4 +1,4 @@
-class RelevantFileGenerator < Rails::Generators::NamedBase
+class RelevanceFileGenerator < Rails::Generators::NamedBase
 
   desc "This generator creates a number of default Rails files."
 
@@ -53,7 +53,7 @@ gem install bundler
     create_file 'config/deploy.rb', <<-CAP_CONFIG
 require 'bundler/capistrano'
 
-set :application, "an_app"
+set :application, "#{name}"
 set :repository,  "."
 set :deploy_via, :copy
 

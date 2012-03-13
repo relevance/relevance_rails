@@ -2,7 +2,7 @@ RVM_RUBY = "ree-1.8.7-2012.02"
 RVM_GEMSET = app_name
 
 def rvm_run(command, config = {})
-  run ". ~/.rvm/scripts/rvm && #{command}", config
+  run ". ~/.rvm/scripts/rvm && rvm use #{RVM_RUBY}@#{RVM_GEMSET} && #{command}", config
 end
 
 run 'rm README.rdoc'
@@ -14,7 +14,7 @@ run 'rm Gemfile'
 run 'rm app/assets/images/rails.png'
 run 'rm app/views/layouts/application.html.erb'
 
-generate(:relevant_file, app_name)
+generate(:relevance_file, app_name)
 
 rvm_run "rvm use #{RVM_RUBY}@#{RVM_GEMSET} --create"
 rvm_run "gem install bundler"

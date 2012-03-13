@@ -1,4 +1,4 @@
 source "http://rubygems.org"
 
-# Specify your gem's dependencies in relevant_rails.gemspec
+# Specify your gem's dependencies in relevance_rails.gemspec
 gemspec

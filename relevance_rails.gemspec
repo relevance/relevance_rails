@@ -1,17 +1,17 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "relevant_rails/version"
+require "relevance_rails/version"
 
 Gem::Specification.new do |s|
-  s.name        = "relevant_rails"
-  s.version     = RelevantRails::VERSION
+  s.name        = "relevance_rails"
+  s.version     = RelevanceRails::VERSION
   s.authors     = ["Alex Redington"]
   s.email       = ["alex.redington@thinkrelevance.com"]
   s.homepage    = ""
   s.summary     = %q{Rails 3 Relevance style, with all infrastructure bits automated away.}
   s.description = %q{A Rails 3 wrapper which forces template use and includes a plethora of generators for standard Relevance bits.}
 
-  s.rubyforge_project = "relevant_rails"
+  s.rubyforge_project = "relevance_rails"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.bindir        = 'bin'
-  s.executables   = ['relevant_rails']
+  s.executables   = ['relevance_rails']
 
   # specify any dependencies here; for example:
   # s.add_development_dependency "rspec"
