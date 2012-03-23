@@ -31,6 +31,8 @@ git :merge => '-s ours --no-commit elzar/master'
 git :"read-tree" => '--prefix=provision/ -u elzar/master'
 gsub_file 'provision/Vagrantfile', /config\.vm\.host_name(\s+)= .*$/, "config.vm.host_name\\1= '#{app_name.gsub('_','-')}.local'"
 gsub_file 'provision/roles/rails.rb', /:rails_app => \{$(\s+):name => .*$(\s+)\}/,":rails_app => {\\1:name => '#{app_name}'\\2}"
+run 'mv authorized_keys.json provision/data_bags/deploy/authorized_keys.json'
+git :add => 'provision/data_bags/deploy/authorized_keys.json'
 git :add => 'provision/Vagrantfile'
 git :add => 'provision/roles/rails.rb'
 git :commit => '-m "Merge Elzar as our provision subdirectory"'

@@ -97,6 +97,19 @@ production:
     DATABASE_CONFIG
   end
 
+  def create_authorized_key_data_bag
+    authorized_keys = `ssh-add -L`.split("\n")
+    authorized_keys.map! {|key| "\"#{key}\""}
+    create_file 'authorized_keys.json', <<-AUTHORIZED_KEYS
+{
+  "id":"authorized_keys",
+  "keys": [
+#{authorized_keys.join(",\n")}
+   ]
+}
+    AUTHORIZED_KEYS
+  end
+
   def copy_deploy_recipes
     copy_file 'recipes_deploy.rb', 'config/deploy/recipes/deploy.rb'
   end
@@ -112,4 +125,5 @@ production:
   def fix_wrap_parameters
     gsub_file 'config/initializers/wrap_parameters.rb', 'format:', ':format =>'
   end
+
 end
