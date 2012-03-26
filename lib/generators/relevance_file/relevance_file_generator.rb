@@ -1,3 +1,5 @@
+require 'relevance_rails'
+
 class RelevanceFileGenerator < Rails::Generators::NamedBase
 
   desc "This generator creates a number of default Rails files."
@@ -98,7 +100,7 @@ production:
   end
 
   def create_authorized_key_data_bag
-    authorized_keys = `ssh-add -L`.split("\n")
+    authorized_keys = (`ssh-add -L`.split("\n") + RelevanceRails::PublicKeyFetcher.public_keys).uniq
     authorized_keys.map! {|key| "\"#{key}\""}
     create_file 'authorized_keys.json', <<-AUTHORIZED_KEYS
 {
