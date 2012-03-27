@@ -51,9 +51,14 @@ gem install bundler
     copy_file 'Capfile', 'Capfile'
   end
 
+  def copy_deployment_generator
+    copy_file 'deployment_generator.rb', 'lib/generators/deployment/deployment_generator.rb'
+  end
+
   def create_deploy
     create_file 'config/deploy.rb', <<-CAP_CONFIG
 require 'bundler/capistrano'
+require 'capistrano_colors'
 
 set :application, "#{name}"
 set :repository,  "."
