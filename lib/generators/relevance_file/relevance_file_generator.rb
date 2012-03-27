@@ -36,7 +36,7 @@ gem install bundler
   end
 
   def create_rvmrc
-    create_file ".rvmrc", "rvm use ree-1.8.7-2012.02@#{name}"
+    create_file ".rvmrc", "rvm use #{RelevanceRails.rvm_version}@#{name}"
   end
 
   def create_rspec

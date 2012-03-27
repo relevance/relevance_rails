@@ -1,8 +1,9 @@
-RVM_RUBY = "ree-1.8.7-2012.02"
-RVM_GEMSET = app_name
+require 'relevance_rails'
+require 'json'
 
 def rvm_run(command, config = {})
-  run ". ~/.rvm/scripts/rvm && rvm use #{RVM_RUBY}@#{RVM_GEMSET} && #{command}", config
+  puts "#{command}..."
+  RelevanceRails.rvm_run("rvm use #{RelevanceRails.rvm_version}@#{app_name} && #{command}")
 end
 
 run 'rm README.rdoc'
@@ -16,7 +17,7 @@ run 'rm app/views/layouts/application.html.erb'
 
 generate(:relevance_file, app_name)
 
-rvm_run "rvm use #{RVM_RUBY}@#{RVM_GEMSET} --create"
+rvm_run "rvm gemset create #{app_name}"
 rvm_run "gem install bundler"
 rvm_run "bundle install"
 
@@ -30,10 +31,15 @@ git :remote => 'add -f elzar git://github.com/relevance/elzar.git'
 git :merge => '-s ours --no-commit elzar/master'
 git :"read-tree" => '--prefix=provision/ -u elzar/master'
 gsub_file 'provision/Vagrantfile', /config\.vm\.host_name(\s+)= .*$/, "config.vm.host_name\\1= '#{app_name.gsub('_','-')}.local'"
-gsub_file 'provision/roles/rails.rb', /:rails_app => \{$(\s+):name => .*$(\s+)\}/,":rails_app => {\\1:name => '#{app_name}'\\2}"
 run 'mv authorized_keys.json provision/data_bags/deploy/authorized_keys.json'
 git :rm => 'authorized_keys.json'
 git :add => 'provision/data_bags/deploy/authorized_keys.json'
 git :add => 'provision/Vagrantfile'
-git :add => 'provision/roles/rails.rb'
+
+json = JSON.parse File.read('provision/dna.json')
+json['rails_app']['name'] = app_name
+run 'rm provision/dna.json'
+create_file 'provision/dna.json', JSON.generate(json)
+git :add => 'provision/dna.json'
+
 git :commit => '-m "Merge Elzar as our provision subdirectory"'
