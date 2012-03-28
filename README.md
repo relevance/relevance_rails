@@ -41,7 +41,7 @@ server:
     -----BEGIN RSA PRIVATE KEY-----
     Include the RSA private key here. This should correspond to the keypair indicated
     by :key_name above.
-    -
+    -----END RSA PRIVATE KEY-----
 ```
 
 Now just provision your instance:
