@@ -16,9 +16,40 @@ Getting Started
 ---------------
 
 ````sh
-    gem install relevance_rails
-    relevance_rails new <your new project>
+$ gem install relevance_rails
+$ relevance_rails new <your new project>
 ````
+
+Provisioning on EC2
+-------------------
+
+First create an aws config in ~/.relevance\_rails/aws\_config.yml.
+An example config looks like this:
+
+```yaml
+aws_credentials:
+  :aws_access_key_id: <your aws access key id>
+  :aws_secret_access_key: <your aws secret access key>
+
+server:
+  creation_config:
+    :flavor_id: <instance type, e.g. 'm1.large'>
+    :image_id: <ami to bootstrap with. Must be some UBUNTU image. e.g. "ami-fd589594">
+    :groups: <security group to place the new deployment in, e.g. "default">
+    :key_name: <name of the public/private keypair to start instance with>
+  private_key: |
+    -----BEGIN RSA PRIVATE KEY-----
+    Include the RSA private key here. This should correspond to the keypair indicated
+    by :key_name above.
+    -
+```
+
+Now just provision your instance:
+
+```sh
+$ rails g deployment qa
+$ cap qa deploy:setup deploy
+```
 
 Caveats
 -------
