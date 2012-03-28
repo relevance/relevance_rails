@@ -6,6 +6,7 @@
 ** TESTING, at minimum an acceptance test script a human executes to ensure correctness across key functional areas
 ** Allowing multiple generators, currently only first generator can be run
 ** cleaner rvm version detection
+** intermittent mysql::server failures (mysql server not up yet) on `vagrant up`. Attempt fix in site_cookbooks
 
 * APP GENERATION
 ** If no git keys url file AND no ssh agent active, complain noisily and refuse to continue
