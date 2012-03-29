@@ -1,11 +1,6 @@
 require 'spec_helper'
 
 describe 'App is alive', :js => true do
-  it 'verifies root is up' do
-    visit '/'
-    page.should have_content "It's alive"
-  end
-
   it 'verifies coffeescript served up as js' do
     visit '/assets/relevance_rails.js'
     page.should have_content "console.log('Hello from Relevance, Inc!');"
