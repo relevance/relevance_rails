@@ -7,7 +7,11 @@ gem 'airbrake', '~> 3.0.4'
 gem 'factory_girl_rails', '1.2.0'
 gem 'jquery-rails', '1.0.14'
 gem 'therubyracer'
+<% if database == 'mysql' %>
 gem 'mysql2', '~> 0.3.11'
+<% elsif database =~ /$postgre/ %>
+gem 'pg', '~> 0.13.2'
+<% end %>
 
 # Gems used only for assets and not required
 # in production environments by default.

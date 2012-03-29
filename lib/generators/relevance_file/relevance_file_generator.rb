@@ -6,8 +6,10 @@ class RelevanceFileGenerator < Rails::Generators::NamedBase
 
   source_root File.expand_path("../templates", __FILE__)
 
+  argument :database, :type => :string, :default => 'mysql'
+
   def copy_gemfile
-    copy_file "Gemfile", "Gemfile"
+    template "Gemfile.erb", "Gemfile"
   end
 
   def create_readme_markdown
