@@ -4,7 +4,7 @@ module RelevanceRails::ChefDNA
     set_database(json, options)
   end
 
-  def set_database(json, options)
+  def self.set_database(json, options)
     if options[:database] == 'postgresql'
       db_index = json['run_list'].find_index { |e| e == 'mysql::server' || e == 'role[postgres_database]'}
       json['run_list'][db_index] = 'role[postgres_database]'
@@ -14,7 +14,7 @@ module RelevanceRails::ChefDNA
     end
   end
 
-  def set_ruby(json)
+  def self.set_ruby(json)
     if RelevanceRails.rvm_version =~ /^ree-(.*)/i
       json['ruby_enterprise']['version'] = $1
       json['ruby_enterprise']['url'] = "http://rubyenterpriseedition.googlecode.com/files/ruby-enterprise-#{$1}"

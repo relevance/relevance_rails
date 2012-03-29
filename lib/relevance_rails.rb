@@ -1,5 +1,6 @@
 require "relevance_rails/version"
 require "relevance_rails/public_key_fetcher"
+require "relevance_rails/chef_dna"
 
 module RelevanceRails
   def self.rvm_gemset
