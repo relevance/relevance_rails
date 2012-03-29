@@ -14,4 +14,5 @@ end
 Capybara.current_driver = :selenium
 Capybara.run_server = false
 # vagrant or ec2 instance is up and running ...
-Capybara.app_host = 'http://184.72.185.16'
+Capybara.app_host = 'http://localhost:3000'
+# Capybara.app_host = 'http://184.72.185.16'
