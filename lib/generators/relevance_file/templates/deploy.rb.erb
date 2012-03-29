@@ -7,7 +7,7 @@ set :deploy_via, :copy
 
 set :scm, :git
 
-set :deploy_to, "/var/www/apps/\%<= application %>"
+set :deploy_to, "/var/www/apps/#{ application }"
 default_run_options[:pty] = true
 set :ssh_options, { :paranoid => false, :forward_agent => true }
 

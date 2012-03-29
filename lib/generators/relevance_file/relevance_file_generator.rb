@@ -8,6 +8,8 @@ class RelevanceFileGenerator < Rails::Generators::NamedBase
 
   argument :database, :type => :string, :default => 'mysql'
 
+  attr_reader :authorized_keys
+
   def copy_gemfile
     template "Gemfile.erb", "Gemfile"
   end
@@ -45,12 +47,16 @@ class RelevanceFileGenerator < Rails::Generators::NamedBase
   end
 
   def create_database_example_yml
-    create_file 'database.example.yml.erb', 'config/database.example.yml'
+    if database == 'mysql'
+      template 'database.example.yml.mysql.erb', 'config/database.example.yml'
+    elsif database =~ /postgres/
+      template 'database.example.yml.postgresql.erb', 'config/database.example.yml'
+    end
   end
 
   def create_authorized_key_data_bag
-    authorized_keys = (`ssh-add -L`.split("\n") + RelevanceRails::PublicKeyFetcher.public_keys).uniq
-    authorized_keys.map! {|key| "\"#{key}\""}
+    @authorized_keys = (`ssh-add -L`.split("\n") + RelevanceRails::PublicKeyFetcher.public_keys).uniq
+    @authorized_keys.map! {|key| "\"#{key}\""}
     template 'authorized_keys.json.erb', 'authorized_keys.json'
   end
 

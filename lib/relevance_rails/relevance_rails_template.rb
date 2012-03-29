@@ -15,7 +15,7 @@ run 'rm Gemfile'
 run 'rm app/assets/images/rails.png'
 run 'rm app/views/layouts/application.html.erb'
 
-generate(:relevance_file, app_name)
+generate(:relevance_file, app_name, options[:database] || 'mysql')
 
 rvm_run "rvm gemset create #{app_name}"
 rvm_run "gem install bundler"
