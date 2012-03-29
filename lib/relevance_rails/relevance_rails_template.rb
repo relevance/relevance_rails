@@ -38,19 +38,7 @@ git :add => 'provision/Vagrantfile'
 
 json = JSON.parse File.read('provision/dna.json')
 json['rails_app']['name'] = app_name
-if RelevanceRails.rvm_version =~ /^ree-(.*)/i
-  json['ruby_enterprise']['version'] = $1
-  json['ruby_enterprise']['url'] = "http://rubyenterpriseedition.googlecode.com/files/ruby-enterprise-#{$1}"
-  appstack_index = json['run_list'].find_index {|e| e[/^role\[.*_appstack\]$/] }
-  json['run_list'][appstack_index] = 'role[enterprise_appstack]'
-elsif RelevanceRails.rvm_version =~ /^ruby-(.*)/i
-  json['ruby']['version'] = $1
-  json['ruby']['url'] = "http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-#{$1}.tar.gz"
-  appstack_index = json['run_list'].find_index {|e| e[/^role\[.*_appstack\]$/] }
-  json['run_list'][appstack_index] = 'role[ruby_appstack]'
-else
-  raise "Your ruby is NOT SUPPORTED. Please use ree or ruby."
-end
+RelevanceRails::ChefDNA.gene_splice(json,options)
 run 'rm provision/dna.json'
 create_file 'provision/dna.json', JSON.generate(json)
 git :add => 'provision/dna.json'
