@@ -1,0 +1,22 @@
+require 'bundler/capistrano'
+require 'capistrano_colors'
+
+set :application, "<%= name %>"
+set :repository,  "."
+set :deploy_via, :copy
+
+set :scm, :git
+
+set :deploy_to, "/var/www/apps/\%<= application %>"
+default_run_options[:pty] = true
+set :ssh_options, { :paranoid => false, :forward_agent => true }
+
+set :copy_exclude, '.git/*'
+
+set :stages, %w(vagrant)
+set :default_stage, 'vagrant'
+
+after "deploy:setup", "deploy:copy_shared_db_config"
+after "deploy:create_symlink", "deploy:symlink_shared_db_config"
+
+Dir['config/deploy/recipes/*.rb'].sort.each { |f| eval(File.read(f)) }

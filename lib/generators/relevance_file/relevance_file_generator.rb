@@ -13,28 +13,11 @@ class RelevanceFileGenerator < Rails::Generators::NamedBase
   end
 
   def create_readme_markdown
-    create_file "README.markdown", <<-README
-# #{name}
-
-## Getting Started
-
-gem install bundler
-# TODO other setup commands here
-    README
+    template "README.markdown.erb", "README.markdown"
   end
 
   def create_application_layout
-    create_file 'app/views/layouts/application.html.haml', <<-LAYOUT
-!!!
-%html
-  %head
-    %title #{name}
-  = stylesheet_link_tag :application
-  = javascript_include_tag :application
-  = csrf_meta_tag
-  %body
-    = yield
-    LAYOUT
+    template 'application.html.haml.erb', 'app/views/layouts/application.html.haml'
   end
 
   def create_rvmrc
@@ -58,65 +41,17 @@ gem install bundler
   end
 
   def create_deploy
-    create_file 'config/deploy.rb', <<-CAP_CONFIG
-require 'bundler/capistrano'
-require 'capistrano_colors'
-
-set :application, "#{name}"
-set :repository,  "."
-set :deploy_via, :copy
-
-set :scm, :git
-
-set :deploy_to, "/var/www/apps/\#{application}"
-default_run_options[:pty] = true
-set :ssh_options, { :paranoid => false, :forward_agent => true }
-
-set :copy_exclude, '.git/*'
-
-set :stages, %w(vagrant)
-set :default_stage, 'vagrant'
-
-after "deploy:setup", "deploy:copy_shared_db_config"
-after "deploy:create_symlink", "deploy:symlink_shared_db_config"
-
-Dir['config/deploy/recipes/*.rb'].sort.each { |f| eval(File.read(f)) }
-    CAP_CONFIG
+    template 'deploy.rb.erb', 'config/deploy.rb'
   end
 
   def create_database_example_yml
-    create_file 'config/database.example.yml', <<-DATABASE_CONFIG
-development:
-  adapter: mysql2
-  encoding: utf8
-  database: #{name}_development
-
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
-test:
-  adapter: mysql2
-  encoding: utf8
-  database: #{name}_test
-
-production:
-  adapter: mysql2
-  encoding: utf8
-  database: #{name}_production
-    DATABASE_CONFIG
+    create_file 'database.example.yml.erb', 'config/database.example.yml'
   end
 
   def create_authorized_key_data_bag
     authorized_keys = (`ssh-add -L`.split("\n") + RelevanceRails::PublicKeyFetcher.public_keys).uniq
     authorized_keys.map! {|key| "\"#{key}\""}
-    create_file 'authorized_keys.json', <<-AUTHORIZED_KEYS
-{
-  "id":"authorized_keys",
-  "keys": [
-#{authorized_keys.join(",\n")}
-   ]
-}
-    AUTHORIZED_KEYS
+    template 'authorized_keys.json.erb', 'authorized_keys.json'
   end
 
   def copy_deploy_recipes
