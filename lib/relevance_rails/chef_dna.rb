@@ -1,14 +1,14 @@
 module RelevanceRails::ChefDNA
-  def self.gene_splice(json, options)
+  def self.gene_splice(json, database)
     set_ruby(json)
-    set_database(json, options)
+    set_database(json, database)
   end
 
-  def self.set_database(json, options)
-    if options[:database] == 'postgresql'
+  def self.set_database(json, database)
+    if database == 'postgresql'
       db_index = json['run_list'].find_index { |e| e == 'mysql::server' || e == 'role[postgres_database]'}
       json['run_list'][db_index] = 'role[postgres_database]'
-    elsif options[:database].nil? || options[:database] == 'mysql'
+    elsif database.nil? || database == 'mysql'
       db_index = json['run_list'].find_index { |e| e == 'mysql::server' || e == 'role[postgres_database]'}
       json['run_list'][db_index] = 'mysql::server'
     end
