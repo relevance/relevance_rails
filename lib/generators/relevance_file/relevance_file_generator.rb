@@ -38,10 +38,10 @@ class RelevanceFileGenerator < Rails::Generators::NamedBase
     copy_file 'Capfile', 'Capfile'
   end
 
-  def copy_generators
-    copy_file 'deployment_generator.rb', 'lib/generators/deployment/deployment_generator.rb'
-    copy_file 'fixtures_generator.rb', 'lib/generators/fixtures/fixtures_generator.rb'
-  end
+  # def copy_generators
+  #   copy_file 'deployment_generator.rb', 'lib/generators/deployment/deployment_generator.rb'
+  #   copy_file 'fixtures_generator.rb', 'lib/generators/fixtures/fixtures_generator.rb'
+  # end
 
   def create_deploy
     template 'deploy.rb.erb', 'config/deploy.rb'
