@@ -31,16 +31,10 @@ git :remote => 'add -f elzar git://github.com/relevance/elzar.git'
 git :merge => '-s ours --no-commit elzar/master'
 git :"read-tree" => '--prefix=provision/ -u elzar/master'
 gsub_file 'provision/Vagrantfile', /config\.vm\.host_name(\s+)= .*$/, "config.vm.host_name\\1= '#{app_name.gsub('_','-')}.local'"
-run 'mv authorized_keys.json provision/data_bags/deploy/authorized_keys.json'
+generate(:provision_config, app_name, options[:database] || 'mysql')
 git :rm => 'authorized_keys.json'
 git :add => 'provision/data_bags/deploy/authorized_keys.json'
 git :add => 'provision/Vagrantfile'
-
-json = JSON.parse File.read('provision/dna.json')
-json['rails_app']['name'] = app_name
-RelevanceRails::ChefDNA.gene_splice(json,options)
-run 'rm provision/dna.json'
-create_file 'provision/dna.json', JSON.generate(json)
 git :add => 'provision/dna.json'
 
 git :commit => '-m "Merge Elzar as our provision subdirectory"'

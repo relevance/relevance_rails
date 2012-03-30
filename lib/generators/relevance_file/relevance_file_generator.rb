@@ -8,8 +8,6 @@ class RelevanceFileGenerator < Rails::Generators::NamedBase
 
   argument :database, :type => :string, :default => 'mysql'
 
-  attr_reader :authorized_keys
-
   def copy_gemfile
     template "Gemfile.erb", "Gemfile"
   end
@@ -38,11 +36,6 @@ class RelevanceFileGenerator < Rails::Generators::NamedBase
     copy_file 'Capfile', 'Capfile'
   end
 
-  # def copy_generators
-  #   copy_file 'deployment_generator.rb', 'lib/generators/deployment/deployment_generator.rb'
-  #   copy_file 'fixtures_generator.rb', 'lib/generators/fixtures/fixtures_generator.rb'
-  # end
-
   def create_deploy
     template 'deploy.rb.erb', 'config/deploy.rb'
   end
@@ -53,12 +46,6 @@ class RelevanceFileGenerator < Rails::Generators::NamedBase
     elsif database == 'postgresql'
       template 'database.example.yml.postgresql.erb', 'config/database.example.yml'
     end
-  end
-
-  def create_authorized_key_data_bag
-    @authorized_keys = (`ssh-add -L`.split("\n") + RelevanceRails::PublicKeyFetcher.public_keys).uniq
-    @authorized_keys.map! {|key| "\"#{key}\""}
-    template 'authorized_keys.json.erb', 'authorized_keys.json'
   end
 
   def copy_deploy_recipes
