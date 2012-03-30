@@ -4,7 +4,6 @@
 ** remove heredocs, replace by erb templates
 ** move all general configuration to a ~/.relevance_rails.yml file (AWS stuff, keys git repo stuff)
 ** TESTING, at minimum an acceptance test script a human executes to ensure correctness across key functional areas
-** Allowing multiple generators, currently only first generator can be run
 ** cleaner rvm version detection
 ** intermittent mysql::server failures (mysql server not up yet) on `vagrant up`. Attempt fix in site_cookbooks
 
