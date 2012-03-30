@@ -32,7 +32,6 @@ git :merge => '-s ours --no-commit elzar/master'
 git :"read-tree" => '--prefix=provision/ -u elzar/master'
 gsub_file 'provision/Vagrantfile', /config\.vm\.host_name(\s+)= .*$/, "config.vm.host_name\\1= '#{app_name.gsub('_','-')}.local'"
 generate(:provision_config, app_name, options[:database] || 'mysql')
-git :rm => 'authorized_keys.json'
 git :add => 'provision/data_bags/deploy/authorized_keys.json'
 git :add => 'provision/Vagrantfile'
 git :add => 'provision/dna.json'

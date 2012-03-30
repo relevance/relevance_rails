@@ -45,6 +45,8 @@ class RelevanceFileGenerator < Rails::Generators::NamedBase
       template 'database.example.yml.mysql.erb', 'config/database.example.yml'
     elsif database == 'postgresql'
       template 'database.example.yml.postgresql.erb', 'config/database.example.yml'
+    else
+      create_file 'database.example.yml', "Don't know how to make a template for database: #{database}"
     end
   end
 
