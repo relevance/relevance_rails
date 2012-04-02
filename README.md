@@ -3,7 +3,7 @@ Relevance Rails
 
 Yo dawg, I heard you like automation, so I automated your automation so you can autopilot while you autopilot!
 
-Rails 3 projects with every fiddly bit convened rather than configured. Includes
+Rails 3 projects with every fiddly bit convened rather than configured. Includes:
 
 * HAML and SCSS
 * RSpec 2 with Relevance config niceties
