@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+# TODO: which gem are we using? is RVM setup for this?
+#PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+
+RAILS_APP="app_for_ci"
+
+function exit_if_any_statement_fails {
+  set -e
+}
+
+
+function build_and_install_gem {
+  if [ `gem list relevance_rails --installed` = "true" ]; then
+    echo "Removing old relevance_rails gem..."
+    gem uninstall --verbose --all --executables relevance_rails 
+    echo "Done"
+  fi
+
+  echo "Building new relevance_rails gem..."
+  rm -Rf relevance_rails-*.gem
+  gem build --verbose relevance_rails.gemspec 
+  echo "Done"
+
+  gem install --verbose --local relevance_rails-*.gem 
+}
+
+function which_gem {
+  gem_name=$1
+  echo `gem which ${gem_name} | sed -e "s/\/lib\/${gem_name}\.rb//"`
+}
+
+function generate_rails_app {
+  rm -Rf ./app_for_ci
+  gem_path=`which_gem 'relevance_rails'`
+  PATH_TO_RELEVANCE_RAILS_GEM=$gem_path relevance_rails new $RAILS_APP
+}
+
+exit_if_any_statement_fails
+# build_and_install_gem
+#generate_rails_app
+
+cd $RAILS_APP
+
+./script/rails generate fixtures
+git add .
+git commit -m "Generated relevance_rails fixtures."
+
+# TODO: have to manually edit the Gemfile to use the locally-installed Gem;
+# need to code to fix this from Gabe & Lake
+
+
+
+
+
+
+
+
+
+
+
+
+
