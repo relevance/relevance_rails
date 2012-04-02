@@ -9,7 +9,6 @@ function exit_if_any_statement_fails {
   set -e
 }
 
-
 function build_and_install_gem {
   if [ `gem list relevance_rails --installed` = "true" ]; then
     echo "Removing old relevance_rails gem..."
@@ -33,31 +32,15 @@ function which_gem {
 function generate_rails_app {
   rm -Rf ./app_for_ci
   gem_path=`which_gem 'relevance_rails'`
-  PATH_TO_RELEVANCE_RAILS_GEM=$gem_path relevance_rails new $RAILS_APP
+  RELEVANCE_RAILS_PATH=$gem_path relevance_rails new $RAILS_APP
 }
 
 exit_if_any_statement_fails
-# build_and_install_gem
-#generate_rails_app
+build_and_install_gem
+generate_rails_app
 
 cd $RAILS_APP
 
 ./script/rails generate fixtures
 git add .
 git commit -m "Generated relevance_rails fixtures."
-
-# TODO: have to manually edit the Gemfile to use the locally-installed Gem;
-# need to code to fix this from Gabe & Lake
-
-
-
-
-
-
-
-
-
-
-
-
-
