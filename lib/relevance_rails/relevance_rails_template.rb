@@ -19,7 +19,7 @@ remove_file 'app/views/layouts/application.html.erb'
 
 generate(:relevance_file, app_name, db)
 
-rvm_run "rvm gemset create #{app_name}"
+run "rvm gemset create #{app_name}"
 rvm_run "gem install bundler"
 rvm_run "bundle install"
 
