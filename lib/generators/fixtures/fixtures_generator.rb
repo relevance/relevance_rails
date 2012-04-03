@@ -6,9 +6,12 @@ end
 STR
   end
 
-  def create_view
+  def create_views
     create_file "app/views/relevance_rails/index.html.haml", <<-STR
 %h1 WELCOME HOME
+STR
+    create_file "app/views/relevance_rails/db.html.haml", <<-STR
+%h1.database= ActiveRecord::Base.connection.current_database
 STR
   end
 
@@ -30,7 +33,12 @@ STR
 
   def modify_routes
     insert_into_file "config/routes.rb", :after => "::Application.routes.draw do" do
-      %[\n  # Required to test relevance_rails gem.\n  match '/relevance_rails' => 'relevance_rails#index'\n]
+      <<-STR
+
+  # Required to test relevance_rails gem.
+  match '/relevance_rails' => 'relevance_rails#index'
+  match '/relevance_rails/db' => 'relevance_rails#db'
+STR
     end
   end
 end

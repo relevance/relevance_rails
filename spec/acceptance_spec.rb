@@ -15,4 +15,11 @@ describe 'App is alive', :js => true do
     visit '/assets/relevance_rails.css'
     page.should have_content "background-color: blue;"
   end
+
+  it "verifies a working database connection" do
+    visit '/relevance_rails/db'
+    within ('h1.database') do
+      page.should have_content '_development'
+    end
+  end
 end
