@@ -8,7 +8,7 @@ module RelevanceRails
   end
 
   def self.rvm_version
-    @rvm_version ||= rvm_current.split('@')[0] || '1.9.3-p0'
+    @rvm_version ||= rvm_current.split('@')[0] || 'ruby-1.9.3-p0'
   end
 
   def self.rvm_current
