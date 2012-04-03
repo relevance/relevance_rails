@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# TODO: which gem are we using? is RVM setup for this?
-#PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+# TODO: will need to be able to override some of the ~/.relevance_rails/aws_config.yml
+# especially around the starter AMI
 
 RAILS_APP="app_for_ci"
 
@@ -33,14 +33,32 @@ function generate_rails_app {
   rm -Rf ./app_for_ci
   gem_path=`which_gem 'relevance_rails'`
   RELEVANCE_RAILS_PATH=$gem_path relevance_rails new $RAILS_APP
+
+  cd $RAILS_APP
+
+  ./script/rails generate fixtures
+  git add .
+  git commit -m "Generated relevance_rails fixtures."
+
+  cd -
+}
+
+function provision_and_deploy_rails_app {
+  cd $RAILS_APP
+  # NOTE: currently, this step will provision an EC2 instance!
+  ./script/rails generate deployment staging
+
+  # ---- TODO ----------
+  # git add .
+  # git commit -m "Generated relevance_rails deployment scripts."
+
+  #TODO: bundle exec cap staging deploy:setup
+  # bundle exec cap staging deploy:cold
 }
 
 exit_if_any_statement_fails
 build_and_install_gem
 generate_rails_app
+provision_and_deploy_rails_app
 
-cd $RAILS_APP
 
-./script/rails generate fixtures
-git add .
-git commit -m "Generated relevance_rails fixtures."
