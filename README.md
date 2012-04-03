@@ -51,15 +51,16 @@ $ rails g deployment qa
 $ cap qa deploy:setup deploy
 ```
 
-For Developers
---------------
+Maintainer Notes
+----------------
 
 When QAing or doing local development of this gem, the gem must be built and installed locally.
 
-Given a relevance_rails app "app" lives in "~/src/app"
-And the relevance_rails source lives in "~/src/relevance_rails"
+
 In order to test deployment, use the example below to package the relevance_rails gem:
 
+    # Given a relevance_rails app "app" lives in "~/src/app"
+    # And the relevance_rails source lives in "~/src/relevance_rails"
     ~/src/relevance_rails $ gem build relevance_rails.gemspec
     ~/src/relevance_rails $ cd ~/src/app
     ~/src/app $ gem install ../relevance_rails/relevance_rails-0.0.7.gem
