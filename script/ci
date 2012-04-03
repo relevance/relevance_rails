@@ -24,15 +24,9 @@ function build_and_install_gem {
   gem install --verbose --local relevance_rails-*.gem 
 }
 
-function which_gem {
-  gem_name=$1
-  echo `gem which ${gem_name} | sed -e "s/\/lib\/${gem_name}\.rb//"`
-}
-
 function generate_rails_app {
   rm -Rf ./app_for_ci
-  gem_path=`which_gem 'relevance_rails'`
-  RELEVANCE_RAILS_PATH=$gem_path relevance_rails new $RAILS_APP
+  relevance_rails new $RAILS_APP --database==postgresql
 
   cd $RAILS_APP
 
