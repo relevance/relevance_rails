@@ -1,4 +1,5 @@
 require 'relevance_rails'
+require 'rails/generators'
 
 class ProvisionConfigGenerator < Rails::Generators::NamedBase
 
@@ -11,7 +12,9 @@ class ProvisionConfigGenerator < Rails::Generators::NamedBase
   attr_reader :authorized_keys
 
   def create_authorized_key_data_bag
-    @authorized_keys = (`ssh-add -L`.split("\n") + RelevanceRails::PublicKeyFetcher.public_keys).uniq
+    if (@authorized_keys = fetch_keys).empty?
+      abort "No ssh keys were found! Check ssh-add -L and your keys_git_url config."
+    end
     @authorized_keys.map! {|key| "\"#{key}\""}
     template('authorized_keys.json.erb', 'provision/data_bags/deploy/authorized_keys.json', {:force => true})
   end
@@ -28,4 +31,11 @@ class ProvisionConfigGenerator < Rails::Generators::NamedBase
     create_file('provision/dna.json', JSON.generate(json), {:force => true})
   end
 
+  private
+
+  def fetch_keys
+    local_key = `ssh-add -L`.split("\n")
+    local_key = [] unless $?.success?
+    (local_key + RelevanceRails::PublicKeyFetcher.public_keys).uniq
+  end
 end
