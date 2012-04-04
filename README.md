@@ -54,9 +54,9 @@ $ cap qa deploy:setup deploy:cold
 Supported Ruby Versions 
 -----------------------
 
-Currently both Ruby 1.9.2 and REE 1.8.7 are supported via RVM.  By default relevance_rails 
-configures your Rails app (and Chef provisioning scripts) to rely on Ruby 1.9.2 unless you 
-invoke the relevance_rails executable using REE 1.8.7.
+Currently both Ruby 1.9.x and REE 1.8.7 are supported via RVM.  relevance_rails 
+configures your Rails app (and Chef provisioning scripts) to require the version
+of Ruby you used to invoke the relevance_rails executable.
 
 Supported Databases 
 -------------------
@@ -84,7 +84,7 @@ In order to test deployment, use the example below to package the relevance_rail
 Caveats
 -------
 
-Currently we only support Ruby 1.9.2, REE 1.8.7, Rails 3.2, MySQL, and PostgreSQL installed on Ubuntu.
+Currently we only support Ruby 1.9.x, REE 1.8.7, Rails 3.2, MySQL, and PostgreSQL installed on Ubuntu.
 
 Improvements
 ------------
