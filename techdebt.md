@@ -6,6 +6,7 @@
 ** TESTING, at minimum an acceptance test script a human executes to ensure correctness across key functional areas
 ** cleaner rvm version detection - intermittenly picks up no version
 ** intermittent mysql::server failures (mysql server not up yet) on `vagrant up`. Attempt fix in site_cookbooks
+** intermittent setup failure - apt-get update fails with 404s or ruby not found
 
 * APP GENERATION
 ** If no git keys url file AND no ssh agent active, complain noisily and refuse to continue
@@ -15,4 +16,4 @@
 ** Make the deployment generator idempotent
 ** Better error handling when the aws.yml is not present
 ** On an uncaught exception, destroy the ec2 instances (?)
-** DeploymentUtil.wait_for_ssh intermittently hangs
+** RelevanceRails::Provision.wait_for_ssh intermittently hangs
