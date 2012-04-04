@@ -47,8 +47,12 @@ server:
 Now just provision your instance:
 
 ```sh
-$ rails g deployment qa
-$ cap qa deploy:setup deploy:cold
+$ rake provision:ec2 NAME=qa
+...
+Server IP: 1.1.1.1
+# Pass IP from previous command as second argument
+$ rails g deployment qa 1.1.1.1
+$ cap qa deploy:setup deploy
 ```
 
 Supported Ruby Versions 
