@@ -13,10 +13,19 @@ module RelevanceRails
   end
 
   def self.rvm_current
-    @rvm_current ||= rvm_run('rvm current').chomp
+    @rvm_current ||= rvm_exec('rvm current').chomp
   end
 
+  # rvm_current SHOULD be in $PATH and execute ruby for the
+  # correct version and gemset
   def self.rvm_run(command)
+    ret = `#{rvm_current} -S #{command}`
+    unless $?.success?
+      abort "\n     Command '#{command}' failed with:\n#{ret}"
+    end
+  end
+  
+  def self.rvm_exec(command)
     `bash -c 'source ~/.rvm/scripts/rvm > /dev/null && #{command}'`
   end
 end

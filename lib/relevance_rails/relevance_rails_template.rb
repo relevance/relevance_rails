@@ -1,9 +1,9 @@
 require 'relevance_rails'
 require 'json'
 
-def rvm_run(command, config = {})
+def rvm_run(command)
   say_status :rvm_run, command
-  RelevanceRails.rvm_run("rvm use #{RelevanceRails.rvm_version}@#{app_name} && #{command}")
+  RelevanceRails.rvm_run(command)
 end
 
 db = ['postgresql','mysql'].include?(options[:database]) ? options[:database] : 'mysql'
