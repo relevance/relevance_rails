@@ -56,7 +56,7 @@ Supported Ruby Versions
 
 Currently both Ruby 1.9.2 and REE 1.8.7 are supported via RVM.  By default relevance_rails 
 configures your Rails app (and Chef provisioning scripts) to rely on Ruby 1.9.2 unless you 
-invoke the `relevance\_rails` executable using REE 1.8.7.
+invoke the relevance_rails executable using REE 1.8.7.
 
 Supported Databases 
 -------------------
