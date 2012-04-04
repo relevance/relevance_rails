@@ -26,7 +26,7 @@ function build_and_install_gem {
 
 function generate_rails_app {
   rm -Rf ./app_for_ci
-  relevance_rails new $RAILS_APP --database==postgresql
+  relevance_rails new $RAILS_APP --database=postgresql
 
   cd $RAILS_APP
 
