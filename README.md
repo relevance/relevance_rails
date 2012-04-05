@@ -12,6 +12,8 @@ Rails 3 projects with every fiddly bit convened rather than configured. Includes
 * Capistrano deploy recipes
 * A VM deployment target under provision
 
+[![Build Status](https://secure.travis-ci.org/relevance/relevance_rails.png?branch=master)](http://travis-ci.org/relevance/relevance_rails)
+
 Getting Started
 ---------------
 
