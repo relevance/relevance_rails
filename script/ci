@@ -22,6 +22,7 @@ echo "Done"
 # it to live on rubygems.org. 
 # NOTE: RVM 1.x doesn't work with "set -e", so you have to unset/set it.
 set +e
+rvm --force gemset delete $RAILS_APP
 rvm gemset create $RAILS_APP
 rvm gemset use $RAILS_APP
 set -e
