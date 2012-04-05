@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
 
-require 'relevance_rails/template_injector'
-
-exec 'rails', *ARGV
+require 'relevance_rails/runner'
+RelevanceRails::Runner.start

@@ -14,6 +14,17 @@ module TestHelpers
     fake.string
   end
 
+  def capture_stdout(&block)
+    original_stdout = $stdout
+    $stdout = fake = StringIO.new
+    begin
+      yield
+    ensure
+      $stdout = original_stdout
+    end
+    fake.string
+  end
+
   # wrapper around raise_error that captures stderr
   def should_abort_with(msg)
     capture_stderr do
