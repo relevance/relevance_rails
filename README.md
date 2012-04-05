@@ -15,10 +15,27 @@ Rails 3 projects with every fiddly bit convened rather than configured. Includes
 Getting Started
 ---------------
 
+For new projects:
+
 ````sh
 $ gem install relevance_rails
 $ relevance_rails new <your new project>
 ````
+
+For existing projects, first add to your Gemfile:
+
+    group :development, :test do
+      gem 'relevance_rails'
+    end
+
+After a `bundle install`, pull in our chef recipes into provision/:
+
+```sh
+# defaults to mysql
+$ rails g provision_config app_name
+# if using postgresql
+$ rails g provision_config app_name postgresql
+```
 
 Provisioning on EC2
 -------------------
@@ -55,19 +72,33 @@ $ rails g deployment qa 1.1.1.1
 $ cap qa deploy:setup deploy
 ```
 
-Supported Ruby Versions 
+Provisioning with Vagrant
+-------------------------
+
+From your app's root directory:
+
+```sh
+$ cd provision
+# pull in vagrant and chef
+$ bundle install
+$ vagrant up
+```
+
+Vagrant instance should be up at 172.25.5.5.
+
+Supported Ruby Versions
 -----------------------
 
-Currently both Ruby 1.9.x and REE 1.8.7 are supported via RVM.  relevance_rails 
+Currently both Ruby 1.9.x and REE 1.8.7 are supported via RVM.  relevance_rails
 configures your Rails app (and Chef provisioning scripts) to require the version
 of Ruby you used to invoke the relevance_rails executable.
 
-Supported Databases 
+Supported Databases
 -------------------
 
-Currently both MySQL and PostgreSQL are supported.  By default relevance_rails configures 
-your Rails app (and Chef provisioning scripts) to use MySQL.  However, if you use the 
-standard `--database=postgresql` Rails option, relevance_rails will use PostgreSQL. 
+Currently both MySQL and PostgreSQL are supported.  By default relevance_rails configures
+your Rails app (and Chef provisioning scripts) to use MySQL.  However, if you use the
+standard `--database=postgresql` Rails option, relevance_rails will use PostgreSQL.
 
 Maintainer Notes
 ----------------
@@ -82,7 +113,7 @@ In order to test deployment, use the example below to package the relevance_rail
     ~/src/relevance_rails $ gem build relevance_rails.gemspec
     ~/src/relevance_rails $ cd ~/src/app
     ~/src/app $ gem install ../relevance_rails/relevance_rails-0.0.7.gem
-    ~/src/app $ bundle package 
+    ~/src/app $ bundle package
     ~/src/app $ git commit -m "Package gems" vendor/cache
 
 Caveats
