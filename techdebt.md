@@ -3,13 +3,9 @@
 * GENERAL
 ** remove heredocs, replace by erb templates
 ** move all general configuration to a ~/.relevance_rails.yml file (AWS stuff, keys git repo stuff)
-** TESTING, at minimum an acceptance test script a human executes to ensure correctness across key functional areas
 ** cleaner rvm version detection - intermittenly picks up no version
 ** intermittent mysql::server failures (mysql server not up yet) on `vagrant up`. Attempt fix in site_cookbooks
 ** intermittent setup failure - apt-get update fails with 404s or ruby not found
-
-* APP GENERATION
-** If no git keys url file AND no ssh agent active, complain noisily and refuse to continue
 
 * deployment generator
 ** Don't hardcode path to chef binstub, caused by ubuntu installing weirdness
