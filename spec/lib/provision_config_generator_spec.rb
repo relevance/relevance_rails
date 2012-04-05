@@ -6,9 +6,14 @@ describe ProvisionConfigGenerator do
     subject { ProvisionConfigGenerator.new(['name']) }
 
     it "aborts if no ssh-keys are found" do
-      subject.should_receive(:fetch_keys).and_return([])
-      msg = "No ssh keys were found! Check ssh-add -L and your keys_git_url config."
-      should_abort_with(msg) do
+      subject.should_receive(:`).and_return do
+        system('exit 1')
+        # Actual message that comes back from failed call
+        'The agent has no entities'
+      end
+      RelevanceRails::PublicKeyFetcher.should_receive(:public_keys).and_return([])
+
+      should_abort_with(/^No ssh keys were found!/) do
         subject.create_authorized_key_data_bag
       end
     end
