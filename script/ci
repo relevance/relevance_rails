@@ -1,15 +1,14 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash --verbose
 
 RAILS_APP="app_for_ci"
 TARGET_HOST="placeholder.example.com"
 
 source "$HOME/.rvm/scripts/rvm"
-rvm use "ruby-1.9.2@relevance_rail"
+rvm use "ruby-1.9.2@relevance_rails"
 
-
-# TODO: run the unit tests BEFORE building a new gem
-echo "TODO: run the specs here!"
-
+gem install bundler
+bundle install
+bundle exec rake spec
 
 # exit if any statement fails; must be set AFTER loading RVM
 set -e
