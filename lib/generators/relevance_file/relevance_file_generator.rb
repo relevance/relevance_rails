@@ -41,8 +41,6 @@ class RelevanceFileGenerator < Rails::Generators::NamedBase
   end
 
   def create_database_example_yml
-    flunk
-
     if database == 'mysql'
       template 'database.example.yml.mysql.erb', 'config/database.example.yml'
     elsif database == 'postgresql'
