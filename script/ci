@@ -1,4 +1,4 @@
-#!/usr/bin/env bash --verbose
+#!/usr/bin/env bash -v
 
 RAILS_APP="app_for_ci"
 TARGET_HOST="placeholder.example.com"
