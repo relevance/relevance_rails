@@ -105,7 +105,6 @@ Maintainer Notes
 
 When QAing or doing local development of this gem, the gem must be built and installed locally.
 
-
 In order to test deployment, use the example below to package the relevance_rails gem:
 
     # Given a relevance_rails app "app" lives in "~/src/app"
