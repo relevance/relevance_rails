@@ -28,14 +28,4 @@ append_file ".gitignore", "config/database.yml\n"
 run 'cp config/database.example.yml config/database.yml'
 git :add => "."
 git :commit => "-a -m 'Initial commit'"
-
-git :remote => 'add -f elzar git://github.com/relevance/elzar.git'
-git :merge => '-s ours --no-commit elzar/master'
-git :"read-tree" => '--prefix=provision/ -u elzar/master'
-gsub_file 'provision/Vagrantfile', /config\.vm\.host_name(\s+)= .*$/, "config.vm.host_name\\1= '#{app_name.gsub('_','-')}.local'"
 generate(:provision_config, app_name, db)
-git :add => 'provision/data_bags/deploy/authorized_keys.json'
-git :add => 'provision/Vagrantfile'
-git :add => 'provision/dna.json'
-
-git :commit => '-m "Merge Elzar as our provision subdirectory"'

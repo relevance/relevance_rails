@@ -23,7 +23,9 @@ Gem::Specification.new do |s|
 
   # specify any dependencies here; for example:
   s.add_runtime_dependency "rails", "~> 3.2"
+  s.add_runtime_dependency 'fog', '~> 1.3.0'
   s.add_development_dependency 'pry'
   s.add_development_dependency 'capybara'
   s.add_development_dependency 'rspec'
+  s.add_development_dependency 'rake', '~> 0.9.2.2'
 end
