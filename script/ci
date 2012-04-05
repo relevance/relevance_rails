@@ -3,18 +3,14 @@
 RAILS_APP="app_for_ci"
 TARGET_HOST="placeholder.example.com"
 
-# Load RVM into a shell session *as a function*
-if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then
-  # First try to load from a user install
-  source "$HOME/.rvm/scripts/rvm"
-elif [[ -s "/usr/local/rvm/scripts/rvm" ]] ; then
-  # Then try to load from a root install
-  source "/usr/local/rvm/scripts/rvm"
-else
-  printf "ERROR: An RVM installation was not found.\n"
-fi
+source "$HOME/.rvm/scripts/rvm"
+rvm use "ruby-1.9.2@relevance_rail"
+
 
 # TODO: run the unit tests BEFORE building a new gem
+echo "TODO: run the specs here!"
+
+
 # exit if any statement fails; must be set AFTER loading RVM
 set -e
 
