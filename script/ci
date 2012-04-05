@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# TODO: will need to be able to override some of the ~/.relevance_rails/aws_config.yml
-# especially around the starter AMI
+RAILS_APP="app_for_ci"
+TARGET_HOST="placeholder.example.com"
 
 # Load RVM into a shell session *as a function*
 if [[ -s "$HOME/.rvm/scripts/rvm" ]] ; then
@@ -14,21 +14,22 @@ else
   printf "ERROR: An RVM installation was not found.\n"
 fi
 
-RAILS_APP="app_for_ci"
-
-# exit if any statement fails (has to be AFTER rvm source)
-#set -e
-
 # TODO: run the unit tests BEFORE building a new gem
+# exit if any statement fails; must be set AFTER loading RVM
+set -e
 
 echo "Building new relevance_rails gem..."
 rm -Rf relevance_rails-*.gem
 gem build --verbose relevance_rails.gemspec 
 echo "Done"
 
+# NOTE: Manual install of just-built gem to workaround bundler wanting 
+# it to live on rubygems.org. 
+# NOTE: RVM 1.x doesn't work with "set -e", so you have to unset/set it.
+set +e
 rvm gemset create $RAILS_APP
 rvm gemset use $RAILS_APP
-echo GEMSET: `rvm gemset name`
+set -e
 
 if [ `gem list relevance_rails --installed` = "true" ]; then
   echo "Removing old relevance_rails gem..."
@@ -43,14 +44,18 @@ echo "Done."
 rm -Rf ./$RAILS_APP
 relevance_rails new $RAILS_APP --database=postgresql
 
-# TODO: this is NOT respecting the RVM gemset
+# NOTE: this does NOT change the RVM gemset; we set it manually above
 cd $RAILS_APP
 
-./script/rails generate deployment staging
+echo "Generating relevance_rails deployment scripts..."
+./script/rails generate deployment staging $TARGET_HOST
 git add .
 git commit -m "Generated relevance_rails deployment scripts."
+echo "Done."
 
+echo "Generating relevance_rails fixtures..."
 ./script/rails generate fixtures
 git add .
 git commit -m "Generated relevance_rails fixtures."
+echo "Done."
 
