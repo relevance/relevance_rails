@@ -34,8 +34,8 @@ class ProvisionConfigGenerator < Rails::Generators::NamedBase
   private
 
   def fetch_keys
-    local_key = `ssh-add -L`.split("\n")
-    local_key = [] unless $?.success?
-    (local_key + RelevanceRails::PublicKeyFetcher.public_keys).uniq
+    local_keys = `ssh-add -L`.split("\n")
+    local_keys = [] unless $?.success?
+    (local_keys + RelevanceRails::PublicKeyFetcher.public_keys).uniq
   end
 end
