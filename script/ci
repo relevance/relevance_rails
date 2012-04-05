@@ -5,54 +5,35 @@
 
 RAILS_APP="app_for_ci"
 
-function exit_if_any_statement_fails {
-  set -e
-}
+# exit if any statement fails
+set -e
 
-function build_and_install_gem {
-  if [ `gem list relevance_rails --installed` = "true" ]; then
-    echo "Removing old relevance_rails gem..."
-    gem uninstall --verbose --all --executables relevance_rails 
-    echo "Done"
-  fi
+# TODO: run the unit tests BEFORE building a new gem
 
-  echo "Building new relevance_rails gem..."
-  rm -Rf relevance_rails-*.gem
-  gem build --verbose relevance_rails.gemspec 
+if [ `gem list relevance_rails --installed` = "true" ]; then
+  echo "Removing old relevance_rails gem..."
+  gem uninstall --verbose --all --executables relevance_rails 
   echo "Done"
+fi
 
-  gem install --verbose --local relevance_rails-*.gem 
-}
+echo "Building new relevance_rails gem..."
+rm -Rf relevance_rails-*.gem
+gem build --verbose relevance_rails.gemspec 
+echo "Done"
 
-function generate_rails_app {
-  rm -Rf ./app_for_ci
-  relevance_rails new $RAILS_APP --database=postgresql
+gem install --verbose --local relevance_rails-*.gem 
 
-  cd $RAILS_APP
+rm -Rf ./app_for_ci
+relevance_rails new $RAILS_APP --database=postgresql
 
-  ./script/rails generate fixtures
-  git add .
-  git commit -m "Generated relevance_rails fixtures."
+# TODO: this is NOT respecting the RVM gemset
+cd $RAILS_APP
 
-  cd -
-}
+./script/rails generate deployment staging
+git add .
+git commit -m "Generated relevance_rails deployment scripts."
 
-function provision_and_deploy_rails_app {
-  cd $RAILS_APP
-  # NOTE: currently, this step will provision an EC2 instance!
-  ./script/rails generate deployment staging
-
-  # ---- TODO ----------
-  # git add .
-  # git commit -m "Generated relevance_rails deployment scripts."
-
-  #TODO: bundle exec cap staging deploy:setup
-  # bundle exec cap staging deploy:cold
-}
-
-exit_if_any_statement_fails
-build_and_install_gem
-generate_rails_app
-provision_and_deploy_rails_app
-
+./script/rails generate fixtures
+git add .
+git commit -m "Generated relevance_rails fixtures."
 
