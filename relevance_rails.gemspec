@@ -5,6 +5,7 @@ require "relevance_rails/version"
 Gem::Specification.new do |s|
   s.name        = "relevance_rails"
   s.version     = RelevanceRails::VERSION
+  s.homepage    = "http://github.com/relevance/relevance_rails"
   s.authors     = ["Alex Redington"]
   s.email       = ["alex.redington@thinkrelevance.com"]
   s.homepage    = ""
