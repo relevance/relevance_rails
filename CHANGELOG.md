@@ -1,4 +1,15 @@
+*v0.1.0*
+
+* Provisioning can be done on existing apps
+* Support multiple rubies - 1.9 and ree
+* Add unit tests
+* Can run acceptance tests on generated apps - rails g fixtures
+* From provision to deploy is a 2 step process - rake provision:ec2 and rails g deployment
+* Add more error handling
+* Tentative support for multiple databases - postgresql and mysql
+
 *v0.0.4*
+
 * Add support for generating EC2 deployment environments
 * 'rails g deployment <environment>' to generate a new environment
 * REQUIRES the presence of ~/.relevance_rails/aws_config.yml
