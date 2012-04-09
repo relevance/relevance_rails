@@ -72,17 +72,32 @@ builtin cd $RAILS_APP
 files_must_NOT_exist public/index.html
 files_must_exist config/database.yml provision/dna.json config/deploy.rb config/deploy/recipes/deploy.rb
 
-echo "Generating relevance_rails deployment scripts..."
-./script/rails generate deployment staging $TARGET_HOST
-git add .
-git commit -m "Generated relevance_rails deployment scripts."
-files_must_exist config/deploy/staging.rb
-echo "Done."
-
 echo "Generating relevance_rails fixtures..."
 ./script/rails generate fixtures
 git add .
 git commit -m "Generated relevance_rails fixtures."
 files_must_exist app/assets/javascripts/relevance_rails.js.coffee app/assets/stylesheets/relevance_rails.css.scss
 echo "Done."
+
+# rake provision:ec2 --> writes to config/ec2_instance.txt
+# TARGET_HOST=something
+# 
+# echo "Generating relevance_rails deployment scripts..."
+# ./script/rails generate deployment staging $TARGET_HOST
+# git add .
+# git commit -m "Generated relevance_rails deployment scripts."
+# files_must_exist config/deploy/staging.rb
+# echo "Done."
+# 
+# cap staging deploy:setup
+# cap staging deploy:cold
+# 
+# cd ..
+# 
+# HOST=$TARGET_HOST rake acceptance
+
+# IF failure, stop the instance
+#cd $RAILS_APP; bundle exec rake provision:stop 
+#IF success, terminate the instance
+#cd $RAILS_APP; bundle exec rake provision:terminate
 

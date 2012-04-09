@@ -9,7 +9,6 @@ module RelevanceRails
     end
 
     def self.stop_ec2
-      instance_id = File.read('config/ec2_instance.txt').chomp
       return unless Thor::Shell::Basic.new.yes?("Are you sure you want to shut down EC2 instance #{instance_id}?")
       puts "Shutting down EC2 instance #{instance_id}..."
       server = fog_connection.servers.get(instance_id)
@@ -19,7 +18,6 @@ module RelevanceRails
     end
 
     def self.destroy_ec2
-      instance_id = File.read('config/ec2_instance.txt').chomp
       return unless Thor::Shell::Basic.new.yes?("Are you sure you want to destroy EC2 instance #{instance_id}?")
       puts "Destroying EC2 instance #{instance_id}..."
       server = fog_connection.servers.get(instance_id)
@@ -31,6 +29,10 @@ module RelevanceRails
     end
 
     private
+
+    def self.instance_id
+      @instance_id ||= File.read('config/ec2_instance.txt').chomp
+    end
 
     def self.config
       @config ||= YAML::load(File.read(File.expand_path("~/.relevance_rails/aws_config.yml")))
