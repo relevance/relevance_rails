@@ -11,6 +11,13 @@ class ProvisionConfigGenerator < Rails::Generators::Base
 
   attr_reader :authorized_keys
 
+  # This generator may not receive a working directory;
+  # and we pull data by shelling out to RVM about the ruby
+  # version. This sets the directory explicitly beforehand.
+  def change_directory
+    Dir.chdir(destination_root)
+  end
+
   def check_authorized_keys
     if (@authorized_keys = fetch_keys).empty?
       abort "No ssh keys were found! Check ssh-add -L and your keys_git_url config."
@@ -42,10 +49,6 @@ class ProvisionConfigGenerator < Rails::Generators::Base
     path = File.expand_path('provision/dna.json', destination_root)
     json = JSON.parse File.binread(path)
     json['rails_app']['name'] = name
-    # This generator may not receive a working directory;
-    # and we pull data by shelling out to RVM about the ruby
-    # version. This sets the directory explicitly beforehand.
-    Dir.chdir(destination_root)
     RelevanceRails::ChefDNA.gene_splice(json,database)
     create_file('provision/dna.json', JSON.generate(json), {:force => true})
   end
@@ -84,6 +87,8 @@ class ProvisionConfigGenerator < Rails::Generators::Base
     end
 
     send(operation, source, destination)
+    # git wasn't picking up current directory
+    change_directory
     git :add => destination
   end
 
