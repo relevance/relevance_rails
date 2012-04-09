@@ -1,5 +1,27 @@
 #!/bin/bash
 
+# Function to sanity-check generators since Rails 3.x does not
+# give a non-zero exist code if generators fail
+function files_must_exist {
+  for checked_file in $*; do
+    if [ ! -e $checked_file ]; then
+      echo "$checked_file didn't exist!"
+      exit 1
+    fi
+  done
+}
+
+# Function to sanity-check generators since Rails 3.x does not
+# give a non-zero exist code if generators fail
+function files_must_NOT_exist {
+  for checked_file in $*; do
+    if [ -e $checked_file ]; then
+      echo "$checked_file still exists!"
+      exit 1
+    fi
+  done
+}
+
 RAILS_APP="app_for_ci"
 TARGET_HOST="placeholder.example.com"
 
@@ -47,43 +69,20 @@ relevance_rails new $RAILS_APP --database=postgresql
 # NOTE: this does NOT change the RVM gemset; we set it manually above
 builtin cd $RAILS_APP
 
-for checked_file in public/index.html; do
-  if [ -e $checked_file ]; then
-    echo "$checked_file still exists!"
-    exit 1
-  fi
-done
-
-for checked_file in config/database.yml provision/dna.json config/deploy.rb config/deploy/recipes/deploy.rb; do
-  if [ ! -e $checked_file ]; then
-    echo "$checked_file didn't exist!"
-    exit 1
-  fi
-done
+files_must_NOT_exist public/index.html
+files_must_exist config/database.yml provision/dna.json config/deploy.rb config/deploy/recipes/deploy.rb
 
 echo "Generating relevance_rails deployment scripts..."
 ./script/rails generate deployment staging $TARGET_HOST
 git add .
 git commit -m "Generated relevance_rails deployment scripts."
+files_must_exist config/deploy/staging.rb
 echo "Done."
-
-for checked_file in config/deploy/staging.rb; do
-  if [ ! -e $checked_file ]; then
-    echo "$checked_file didn't exist!"
-    exit 1
-  fi
-done
 
 echo "Generating relevance_rails fixtures..."
 ./script/rails generate fixtures
 git add .
 git commit -m "Generated relevance_rails fixtures."
+files_must_exist app/assets/javascripts/relevance_rails.js.coffee app/assets/stylesheets/relevance_rails.css.scss
 echo "Done."
-
-for checked_file in app/assets/javascripts/relevance_rails.js.coffee app/assets/stylesheets/relevance_rails.css.scss; do
-  if [ ! -e $checked_file ]; then
-    echo "$checked_file didn't exist!"
-    exit 1
-  fi
-done
 
