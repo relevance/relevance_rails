@@ -68,6 +68,7 @@ module RelevanceRails
       print_errors(jobs)
       puts "Server Instance: #{server.id}"
       puts "Server IP: #{server.public_ip_address}"
+      return server
     end
 
     def self.wait_for_ssh(server)

@@ -34,9 +34,9 @@ After a `bundle install`, pull in our chef recipes into provision/:
 
 ```sh
 # defaults to mysql
-$ rails g provision_config app_name
+$ rails g provision_config
 # if using postgresql
-$ rails g provision_config app_name postgresql
+$ rails g provision_config postgresql
 ```
 
 Provisioning on EC2
@@ -66,11 +66,7 @@ server:
 Now just provision your instance:
 
 ```sh
-$ rake provision:ec2 NAME=qa
-...
-Server IP: 1.1.1.1
-# Pass IP from previous command as second argument
-$ rails g deployment qa 1.1.1.1
+$ rake provision:ec2_server NAME=qa
 $ cap qa deploy:setup deploy
 ```
 

@@ -1,7 +1,7 @@
 require 'relevance_rails'
 require 'rails/generators'
 
-class ProvisionConfigGenerator < Rails::Generators::NamedBase
+class ProvisionConfigGenerator < Rails::Generators::Base
 
   desc "This generator configures the provision sub-directory with appropriate files."
 
@@ -10,6 +10,14 @@ class ProvisionConfigGenerator < Rails::Generators::NamedBase
   argument :database, :type => :string, :default => 'mysql'
 
   attr_reader :authorized_keys
+
+  def create_capistrano_files
+    backup_copy_file 'Capfile', 'Capfile'
+    backup_template 'deploy.rb.erb', 'config/deploy.rb'
+    backup_copy_file 'recipes_deploy.rb', 'config/deploy/recipes/deploy.rb'
+    backup_copy_file 'vagrant.rb', 'config/deploy/vagrant.rb'
+    git :commit => '-m "Add Capistrano files"'
+  end
 
   def fetch_elzar
     git :remote => 'add -f elzar git://github.com/relevance/elzar.git'
@@ -39,6 +47,11 @@ class ProvisionConfigGenerator < Rails::Generators::NamedBase
     create_file('provision/dna.json', JSON.generate(json), {:force => true})
   end
 
+  def create_rvmrc
+    create_file('provision/.rvmrc', File.read(Rails.root.join('.rvmrc')), :force => true)
+    git :add => 'provision/.rvmrc'
+  end
+
   def commit_changes
     git :add => 'provision/data_bags/deploy/authorized_keys.json'
     git :add => 'provision/Vagrantfile'
@@ -47,6 +60,30 @@ class ProvisionConfigGenerator < Rails::Generators::NamedBase
   end
 
   private
+
+  def name
+    Rails.application.class.name.split('::').first.underscore
+  end
+
+  def backup_copy_file(source, destination)
+    backup_manip_file(source, destination, :copy_file)
+  end
+
+  def backup_template(source, destination)
+    backup_manip_file(source, destination, :template)
+  end
+
+  def backup_manip_file(source, destination, operation)
+    if File.exists?(destination)
+      backup_file = "#{destination}.bak"
+      say_status :backup, "#{destination} to #{backup_file}"
+      git :mv => "#{destination} #{backup_file}"
+    end
+
+    send(operation, source, destination)
+    git :add => destination
+  end
+
 
   def fetch_keys
     local_keys = `ssh-add -L`.split("\n")
