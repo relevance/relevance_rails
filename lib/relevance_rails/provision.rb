@@ -32,6 +32,7 @@ module RelevanceRails
       jobs += server.ssh('cd /tmp/chef-solo && sudo /var/lib/gems/1.8/bin/chef-solo -c solo.rb -j dna.json')
       print_errors(jobs)
       puts "Server IP: #{server.public_ip_address}"
+      return server
     end
 
     def self.wait_for_ssh(server)
