@@ -1,0 +1,70 @@
+#!/bin/bash
+
+#!/usr/bin/env ruby
+# Two problems: 1) the script/ci and this script should be architected similarly,
+# for example, both should be rspec or similar, maybe? and 2) this is a long-running
+# command and we want to show interim feedback as it runs, NOT just wait till it 
+# finishes to spit out the shell output
+# def execute(command)
+#   begin
+#     IO.popen(command) do |io|
+#       io.each do |out|
+#         print out
+#       end
+#     end
+#     unless $?.success?
+#       exit 1
+#     end
+#   rescue => e
+#     puts e.inspect
+#     puts e.backtrace
+#     exit 1
+#   end
+# end
+
+#####
+./script/ci
+
+# at this point we've generated an app
+# we can now provision
+# then we'll need to call "generate deployment" again with the new hostname
+# then cap
+# then rspec acceptance tests
+
+# need to be UNIXY; need the stdout AND the exit code
+source "$HOME/.rvm/scripts/rvm"
+RAILS_APP="app_for_ci"
+cd $RAILS_APP
+
+output=`rake provision:ec2 NAME="LK LD Testing - Staging"`
+return_value=$?
+
+[ $return_value -ne 0 ] && exit $return_value 
+
+grep -e 'Server IP' $output | cut -d" " -f3
+
+#unless ec2_provisioned
+#  print error message
+#end
+#
+#TARGET_HOST=something from stdout
+#
+## call the generator again, this time with the real target_host
+##
+#unless success
+#end
+#
+##cap staging deploy:setup
+##cap staging deploy:cold
+#
+#unless success
+#end
+
+# 
+# HOST=$TARGET_HOST rake acceptance
+
+# IF failure, stop the instance
+#cd $RAILS_APP; bundle exec rake provision:stop 
+#IF success, terminate the instance
+#cd $RAILS_APP; bundle exec rake provision:terminate
+
