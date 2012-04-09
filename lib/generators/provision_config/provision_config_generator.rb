@@ -47,6 +47,11 @@ class ProvisionConfigGenerator < Rails::Generators::NamedBase
     create_file('provision/dna.json', JSON.generate(json), {:force => true})
   end
 
+  def create_rvmrc
+    create_file('provision/.rvmrc', File.read(Rails.root.join('.rvmrc')), :force => true)
+    git :add => 'provision/.rvmrc'
+  end
+
   def commit_changes
     git :add => 'provision/data_bags/deploy/authorized_keys.json'
     git :add => 'provision/Vagrantfile'
