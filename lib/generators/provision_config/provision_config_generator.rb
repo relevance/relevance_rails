@@ -11,6 +11,8 @@ class ProvisionConfigGenerator < Rails::Generators::NamedBase
 
   attr_reader :authorized_keys
 
+  flunk
+
   def fetch_elzar
     git :remote => 'add -f elzar git://github.com/relevance/elzar.git'
     git :merge => '-s ours --no-commit elzar/master'
