@@ -11,6 +11,12 @@ class ProvisionConfigGenerator < Rails::Generators::Base
 
   attr_reader :authorized_keys
 
+  def check_authorized_keys
+    if (@authorized_keys = fetch_keys).empty?
+      abort "No ssh keys were found! Check ssh-add -L and your keys_git_url config."
+    end
+  end
+
   def create_capistrano_files
     backup_copy_file 'Capfile', 'Capfile'
     backup_template 'deploy.rb.erb', 'config/deploy.rb'
@@ -28,9 +34,6 @@ class ProvisionConfigGenerator < Rails::Generators::Base
   end
 
   def create_authorized_key_data_bag
-    if (@authorized_keys = fetch_keys).empty?
-      abort "No ssh keys were found! Check ssh-add -L and your keys_git_url config."
-    end
     @authorized_keys.map! {|key| "\"#{key}\""}
     template('authorized_keys.json.erb', 'provision/data_bags/deploy/authorized_keys.json', {:force => true})
   end
