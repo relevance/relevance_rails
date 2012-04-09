@@ -5,7 +5,7 @@ TARGET_HOST="placeholder.example.com"
 
 # Setup RVM
 source "$HOME/.rvm/scripts/rvm"
-rvm gemset use "relevance_rails"
+rvm use "ruby-1.9.2@relevance_rails"
 
 echo "DEBUG: using gemset: `rvm gemset name`"
 
