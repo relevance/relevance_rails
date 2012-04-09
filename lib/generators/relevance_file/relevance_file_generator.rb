@@ -32,14 +32,6 @@ class RelevanceFileGenerator < Rails::Generators::NamedBase
     copy_file 'spec_helper.rb', 'spec/spec_helper.rb'
   end
 
-  def copy_capfile
-    copy_file 'Capfile', 'Capfile'
-  end
-
-  def create_deploy
-    template 'deploy.rb.erb', 'config/deploy.rb'
-  end
-
   def create_database_example_yml
     if database == 'mysql'
       template 'database.example.yml.mysql.erb', 'config/database.example.yml'
@@ -48,14 +40,6 @@ class RelevanceFileGenerator < Rails::Generators::NamedBase
     else
       create_file 'database.example.yml', "Don't know how to make a template for database: #{database}"
     end
-  end
-
-  def copy_deploy_recipes
-    copy_file 'recipes_deploy.rb', 'config/deploy/recipes/deploy.rb'
-  end
-
-  def copy_vagrant_stage
-    copy_file 'vagrant.rb', 'config/deploy/vagrant.rb'
   end
 
   def fix_session_store
