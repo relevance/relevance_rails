@@ -1,7 +1,7 @@
 require 'relevance_rails'
 require 'rails/generators'
 
-class ProvisionConfigGenerator < Rails::Generators::NamedBase
+class ProvisionConfigGenerator < Rails::Generators::Base
 
   desc "This generator configures the provision sub-directory with appropriate files."
 
@@ -60,6 +60,10 @@ class ProvisionConfigGenerator < Rails::Generators::NamedBase
   end
 
   private
+
+  def name
+    Rails.application.class.name.split('::').first.underscore
+  end
 
   def backup_copy_file(source, destination)
     backup_manip_file(source, destination, :copy_file)

@@ -28,4 +28,4 @@ append_file ".gitignore", "config/database.yml\n"
 run 'cp config/database.example.yml config/database.yml'
 git :add => "."
 git :commit => "-a -m 'Initial commit'"
-generate(:provision_config, app_name, db)
+generate(:provision_config, db)

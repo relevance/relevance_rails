@@ -34,9 +34,9 @@ After a `bundle install`, pull in our chef recipes into provision/:
 
 ```sh
 # defaults to mysql
-$ rails g provision_config app_name
+$ rails g provision_config
 # if using postgresql
-$ rails g provision_config app_name postgresql
+$ rails g provision_config postgresql
 ```
 
 Provisioning on EC2
