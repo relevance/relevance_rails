@@ -43,6 +43,8 @@ module RelevanceRails
     end
 
     def self.provision_ec2_instances(name)
+      original_timeout = Fog.timeout
+      Fog.timeout = 60
       server = fog_connection.servers.create(config['server']['creation_config'])
       fog_connection.tags.create(:key => 'Name',
                       :value => "#{Rails.application.class.parent_name} #{name}",
@@ -54,26 +56,32 @@ module RelevanceRails
         f.puts(server.id)
       end
 
-      jobs = []
       puts "Updating apt cache..."
-      jobs += server.ssh('sudo apt-get update')
+      run_command(server, 'sudo apt-get update')
       puts "Installing ruby..."
-      jobs += server.ssh('sudo apt-get -y install ruby')
+      run_command(server, 'sudo apt-get -y install ruby')
       puts "Installing rubygems..."
-      jobs += server.ssh('sudo apt-get -y install rubygems1.8')
+      run_command(server, 'sudo apt-get -y install rubygems1.8')
       puts "Installing chef..."
-      jobs += server.ssh('sudo gem install chef --no-ri --no-rdoc --version 0.10.8')
+      run_command(server, 'sudo gem install chef --no-ri --no-rdoc --version 0.10.8')
       puts "Copying chef resources from provision directory.."
       server.scp("#{Rails.root.join('provision')}/", '/tmp/chef-solo', :recursive => true)
       puts "Converging server, this may take a while (10-20 minutes)"
-      jobs += server.ssh('cd /tmp/chef-solo && sudo /var/lib/gems/1.8/bin/chef-solo -c solo.rb -j dna.json')
-      print_errors(jobs)
+      run_command(server, 'cd /tmp/chef-solo && sudo /var/lib/gems/1.8/bin/chef-solo -c solo.rb -j dna.json')
+
       puts "Server Instance: #{server.id}"
       puts "Server IP: #{server.public_ip_address}"
+      Fog.timeout = original_timeout
       return server
     end
 
+    def self.run_command(server, command)
+      jobs = server.ssh(command)
+      exit 1 unless jobs_succeeded?(jobs)
+    end
+
     def self.wait_for_ssh(server)
+      puts "Provisioning an instance..."
       server.wait_for { ready? }
       succeeded = false
       attempts = 0
@@ -84,7 +92,7 @@ module RelevanceRails
           server.ssh('ls')
           succeeded = true
         rescue Errno::ECONNREFUSED => e
-          puts "Connection #{attempts} refused, retrying..."
+          puts "Connecting to Amazon refused. Attempt #{attempts+1}..."
           attempts += 1
           last_error = e
         end
@@ -93,15 +101,16 @@ module RelevanceRails
       puts "Server up and listening for SSH..."
     end
 
-    def self.print_errors(jobs)
-      return if jobs.all? { |job| job.status == 0 }
+    def self.jobs_succeeded?(jobs)
+      return true if jobs.all? { |job| job.status == 0 }
       jobs.each do |job|
         puts "----------------------"
-        puts "Running #{job.command}"
+        puts "Command '#{job.command}'"
         puts "STDOUT: #{job.stdout}"
         puts "STDERR: #{job.stderr}"
         puts "----------------------"
       end
+      return false
     end
 
   end
