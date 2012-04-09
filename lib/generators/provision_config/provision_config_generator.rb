@@ -28,8 +28,6 @@ class ProvisionConfigGenerator < Rails::Generators::NamedBase
   end
 
   def create_dna_json
-    flunk
-
     path = File.expand_path('provision/dna.json', destination_root)
     json = JSON.parse File.binread(path)
     json['rails_app']['name'] = name
