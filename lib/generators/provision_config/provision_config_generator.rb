@@ -11,8 +11,6 @@ class ProvisionConfigGenerator < Rails::Generators::NamedBase
 
   attr_reader :authorized_keys
 
-  flunk
-
   def fetch_elzar
     git :remote => 'add -f elzar git://github.com/relevance/elzar.git'
     git :merge => '-s ours --no-commit elzar/master'
@@ -30,6 +28,8 @@ class ProvisionConfigGenerator < Rails::Generators::NamedBase
   end
 
   def create_dna_json
+    flunk
+
     path = File.expand_path('provision/dna.json', destination_root)
     json = JSON.parse File.binread(path)
     json['rails_app']['name'] = name
