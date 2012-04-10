@@ -82,6 +82,6 @@ echo "Done."
 echo "Generating relevance_rails deployment scripts..."
 ./script/rails generate deployment staging $TARGET_HOST
 git add .
-git commit -m "Generated relevance_rails deployment scripts."
+git commit -m "Generated relevance_rails deployment scripts for $TARGET_HOST."
 files_must_exist config/deploy/staging.rb
 echo "Done."

@@ -1,71 +1,59 @@
 #!/bin/bash
 
-#!/usr/bin/env ruby
-# Two problems: 1) the script/ci and this script should be architected similarly,
-# for example, both should be rspec or similar, maybe? and 2) this is a long-running
-# command and we want to show interim feedback as it runs, NOT just wait till it 
-# finishes to spit out the shell output
-# def execute(command)
-#   begin
-#     IO.popen(command) do |io|
-#       io.each do |out|
-#         print out
-#       end
-#     end
-#     unless $?.success?
-#       exit 1
-#     end
-#   rescue => e
-#     puts e.inspect
-#     puts e.backtrace
-#     exit 1
-#   end
-# end
-
-#####
-set -e 
-./script/ci
-
-# at this point we've generated an app
-# we can now provision
-# then we'll need to call "generate deployment" again with the new hostname
-# then cap
-# then rspec acceptance tests
-
-# need to be UNIXY; need the stdout AND the exit code
-source "$HOME/.rvm/scripts/rvm"
 RAILS_APP="app_for_ci"
-cd $RAILS_APP
+EC2_MEMENTO_FILE="config/ec2_instance.txt"
 
-output=`rake provision:ec2 NAME="LK LD Testing - Staging"`
-return_value=$?
+function stop_server_and_exit {
+  if [ -f $EC2_MEMENTO_FILE ]; then
+    echo "Stopping newly-created server..."
+    bundle exec rake provision:stopA
+    echo "Done."
+    exit 1
+  fi  
+}
 
-[ $return_value -ne 0 ] && exit $return_value 
+#./script/ci 
 
-grep -e 'Server IP' $output | cut -d" " -f3
+source "$HOME/.rvm/scripts/rvm"
+rvm gemset use $RAILS_APP
+builtin cd $RAILS_APP
 
-#unless ec2_provisioned
-#  print error message
-#end
-#
-#TARGET_HOST=something from stdout
-#
-## call the generator again, this time with the real target_host
-##
-#unless success
-#end
-#
-##cap staging deploy:setup
-##cap staging deploy:cold
-#
-#unless success
-#end
+echo "Provisioning an EC2 instance..."
+rm -f $EC2_MEMENTO_FILE
+bundle exec rake provision:ec2 NAME="Nightly Build Testing" 
+[ $? -ne 0 ] && stop_server_and_exit
+echo "Done!"
 
-# 
-# HOST=$TARGET_HOST rake acceptance
+echo "WIP: we haven't implemented farther than this yet!"
+exit 1
 
-# IF failure, stop the instance
-#cd $RAILS_APP; bundle exec rake provision:stop 
-#IF success, terminate the instance
-#cd $RAILS_APP; bundle exec rake provision:terminate
+TARGET_HOST=`bundle exec rake provision:current_ip`
+
+echo "Generating relevance_rails deployment scripts..."
+./script/rails generate deployment staging $TARGET_HOST
+[ $? -ne 0 ] && stop_server_and_exit
+git add .
+git commit -m "Generated relevance_rails deployment scripts for $TARGET_HOST."
+echo "Done."
+
+echo "Capistrano: setup..."
+cap staging deploy:setup
+[ $? -ne 0 ] && stop_server_and_exit
+echo "Done."
+
+echo "Capistrano: deploying..."
+cap staging deploy:cold
+[ $? -ne 0 ] && stop_server_and_exit
+echo "Done."
+
+builtin cd -
+
+echo "Running the acceptance tests against our newly-created server..."
+HOST=$TARGET_HOST rake acceptance
+[ $? -ne 0 ] && stop_server_and_exit
+echo "Done."
+
+echo "Terminating our newly-created server..."
+bundle exec rake provision:destroy
+echo "Done!"
 
