@@ -2,6 +2,7 @@ require 'relevance_rails'
 require 'rails/generators'
 
 class ProvisionConfigGenerator < Rails::Generators::Base
+  include RelevanceRails::GeneratorOverrides
 
   desc "This generator configures the provision sub-directory with appropriate files."
 
