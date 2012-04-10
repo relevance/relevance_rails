@@ -56,6 +56,10 @@ module RelevanceRails
         f.puts(server.id)
       end
 
+      run_commands server
+    end
+    
+    def self.run_commands(server)
       puts "Updating apt cache..."
       run_command(server, 'sudo apt-get update')
       puts "Installing ruby..."
