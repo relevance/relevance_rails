@@ -6,13 +6,13 @@ EC2_MEMENTO_FILE="config/ec2_instance.txt"
 function stop_server_and_exit {
   if [ -f $EC2_MEMENTO_FILE ]; then
     echo "Stopping newly-created server..."
-    bundle exec rake provision:stopA
+    bundle exec rake provision:stop FORCE=true --trace
     echo "Done."
     exit 1
   fi  
 }
 
-#./script/ci 
+./script/ci 
 
 source "$HOME/.rvm/scripts/rvm"
 rvm gemset use $RAILS_APP
@@ -20,40 +20,45 @@ builtin cd $RAILS_APP
 
 echo "Provisioning an EC2 instance..."
 rm -f $EC2_MEMENTO_FILE
-bundle exec rake provision:ec2 NAME="Nightly Build Testing" 
+bundle exec rake provision:ec2 NAME="Nightly Build Testing - `date "+%Y-%m-%d"` " --trace
 [ $? -ne 0 ] && stop_server_and_exit
 echo "Done!"
 
-echo "WIP: we haven't implemented farther than this yet!"
-exit 1
-
-TARGET_HOST=`bundle exec rake provision:current_ip`
+echo "Determine the EC2 instance's DNS name..."
+TARGET_HOST=`bundle exec rake provision:current_dns`
+[ $? -ne 0 ] && stop_server_and_exit
+echo "Done."
 
 echo "Generating relevance_rails deployment scripts..."
-./script/rails generate deployment staging $TARGET_HOST
+./script/rails generate deployment staging $TARGET_HOST --force
 [ $? -ne 0 ] && stop_server_and_exit
 git add .
 git commit -m "Generated relevance_rails deployment scripts for $TARGET_HOST."
-echo "Done."
-
-echo "Capistrano: setup..."
-cap staging deploy:setup
 [ $? -ne 0 ] && stop_server_and_exit
 echo "Done."
-
+ 
+echo "Capistrano: setup..."
+bundle exec cap staging deploy:setup
+[ $? -ne 0 ] && stop_server_and_exit
+echo "Done."
+ 
 echo "Capistrano: deploying..."
-cap staging deploy:cold
+bundle exec cap staging deploy:cold
 [ $? -ne 0 ] && stop_server_and_exit
 echo "Done."
 
 builtin cd -
+rvm gemset use relevance_rails
 
 echo "Running the acceptance tests against our newly-created server..."
-HOST=$TARGET_HOST rake acceptance
+ACCEPTANCE_HOST=$TARGET_HOST rake acceptance --trace
 [ $? -ne 0 ] && stop_server_and_exit
 echo "Done."
 
+builtin cd $RAILS_APP
+rvm gemset use $RAILS_APP
+
 echo "Terminating our newly-created server..."
-bundle exec rake provision:destroy
+bundle exec rake provision:destroy FORCE=true --trace 
 echo "Done!"
 
