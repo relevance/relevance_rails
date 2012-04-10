@@ -5,7 +5,9 @@ module RelevanceRails
   module Provision
     def self.create_ec2(name = nil)
       abort "Please provide a $NAME" unless name
-      provision_ec2_instances(name)
+      server = provision_ec2_instances(name)
+      wait_for_ssh server
+      run_commands server
     end
 
     def self.stop_ec2
@@ -43,6 +45,7 @@ module RelevanceRails
     end
 
     def self.provision_ec2_instances(name)
+      puts "Provisioning an instance..."
       original_timeout = Fog.timeout
       Fog.timeout = 60
       server = fog_connection.servers.create(config['server']['creation_config'])
@@ -50,13 +53,13 @@ module RelevanceRails
                       :value => "#{Rails.application.class.parent_name} #{name}",
                       :resource_id => server.id)
       server.private_key = config['server']['private_key']
-      wait_for_ssh server
-
+      
       File.open("config/ec2_instance.txt", "w") do |f|
         f.puts(server.id)
       end
 
-      run_commands server
+      puts "Provisioned!"
+      server
     end
     
     def self.run_commands(server)
@@ -76,7 +79,7 @@ module RelevanceRails
       puts "Server Instance: #{server.id}"
       puts "Server IP: #{server.public_ip_address}"
       Fog.timeout = original_timeout
-      return server
+      server
     end
 
     def self.run_command(server, command)
@@ -85,7 +88,7 @@ module RelevanceRails
     end
 
     def self.wait_for_ssh(server)
-      puts "Provisioning an instance..."
+      puts "Waiting for ssh connectivity..."
       server.wait_for { ready? }
       succeeded = false
       attempts = 0
@@ -102,7 +105,7 @@ module RelevanceRails
         end
       end
       raise last_error unless succeeded
-      puts "Server up and listening for SSH..."
+      puts "Server up and listening for SSH!"
     end
 
     def self.jobs_succeeded?(jobs)
@@ -114,7 +117,7 @@ module RelevanceRails
         puts "STDERR: #{job.stderr}"
         puts "----------------------"
       end
-      return false
+      false
     end
 
   end
