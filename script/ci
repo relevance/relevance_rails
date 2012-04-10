@@ -3,9 +3,9 @@
 # Function to sanity-check generators since Rails 3.x does not
 # give a non-zero exist code if generators fail
 function files_must_exist {
-  for checked_file in $*; do
-    if [ ! -e $checked_file ]; then
-      echo "$checked_file didn't exist!"
+  for checked_file in "$@"; do
+    if [ ! -e "$checked_file" ]; then
+      echo "'$checked_file' didn't exist!"
       exit 1
     fi
   done
@@ -14,9 +14,9 @@ function files_must_exist {
 # Function to sanity-check generators since Rails 3.x does not
 # give a non-zero exist code if generators fail
 function files_must_NOT_exist {
-  for checked_file in $*; do
-    if [ -e $checked_file ]; then
-      echo "$checked_file still exists!"
+  for checked_file in "$@"; do
+    if [ -e "$checked_file" ]; then
+      echo "'$checked_file' still exists!"
       exit 1
     fi
   done
@@ -53,7 +53,7 @@ rvm gemset create $RAILS_APP
 rvm gemset use $RAILS_APP
 set -e
 
-if [ `gem list relevance_rails --installed` = "true" ]; then
+if $(gem list relevance_rails --installed); then
   echo "Removing old relevance_rails gem..."
   gem uninstall --verbose --all --executables relevance_rails
   echo "Done"
