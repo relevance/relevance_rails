@@ -111,7 +111,8 @@ In order to test deployment, use the example below to package the relevance_rail
     ~/src/relevance_rails $ cd ~/src/app
     ~/src/app $ gem install ../relevance_rails/relevance_rails-0.0.7.gem
     ~/src/app $ bundle package
-    ~/src/app $ git commit -m "Package gems" vendor/cache
+    ~/src/app $ git add vendor/cache
+    ~/src/app $ git commit -m "Package gems"
 
 Caveats
 -------
