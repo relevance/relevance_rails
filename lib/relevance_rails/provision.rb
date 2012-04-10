@@ -1,5 +1,6 @@
 require 'fog'
 require 'thor'
+require 'timeout'
 
 module RelevanceRails
   module Provision
@@ -43,8 +44,6 @@ module RelevanceRails
     end
 
     def self.provision_ec2_instances(name)
-      original_timeout = Fog.timeout
-      Fog.timeout = 60
       server = fog_connection.servers.create(config['server']['creation_config'])
       fog_connection.tags.create(:key => 'Name',
                       :value => "#{Rails.application.class.parent_name} #{name}",
@@ -57,6 +56,7 @@ module RelevanceRails
       end
 
       run_commands server
+      return server
     end
     
     def self.run_commands(server)
@@ -75,8 +75,6 @@ module RelevanceRails
 
       puts "Server Instance: #{server.id}"
       puts "Server IP: #{server.public_ip_address}"
-      Fog.timeout = original_timeout
-      return server
     end
 
     def self.run_command(server, command)
@@ -93,9 +91,10 @@ module RelevanceRails
       until succeeded || attempts > 4
         sleep 10
         begin
-          server.ssh('ls')
+          # Should be checked for compatability across rubies
+          Timeout.timeout(60) { server.ssh('ls') }
           succeeded = true
-        rescue Errno::ECONNREFUSED => e
+        rescue Errno::ECONNREFUSED, Timeout::Error => e
           puts "Connecting to Amazon refused. Attempt #{attempts+1}..."
           attempts += 1
           last_error = e
