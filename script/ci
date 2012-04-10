@@ -31,7 +31,7 @@ rvm use "ruby-1.9.2@relevance_rails"
 
 echo "DEBUG: using gemset: `rvm gemset name`"
 
-# exit if any statement fails; 
+# exit if any statement fails;
 # must be set AFTER loading RVM
 set -e
 
@@ -41,11 +41,11 @@ bundle exec rake spec
 
 echo "Building new relevance_rails gem..."
 rm -Rf relevance_rails-*.gem
-gem build --verbose relevance_rails.gemspec 
+gem build --verbose relevance_rails.gemspec
 echo "Done"
 
-# NOTE: Manual install of just-built gem to workaround bundler wanting 
-# it to live on rubygems.org. 
+# NOTE: Manual install of just-built gem to workaround bundler wanting
+# it to live on rubygems.org.
 # NOTE: RVM 1.x doesn't work with "set -e", so you have to unset/set it.
 set +e
 rvm --force gemset delete $RAILS_APP
@@ -55,12 +55,12 @@ set -e
 
 if [ `gem list relevance_rails --installed` = "true" ]; then
   echo "Removing old relevance_rails gem..."
-  gem uninstall --verbose --all --executables relevance_rails 
+  gem uninstall --verbose --all --executables relevance_rails
   echo "Done"
 fi
 
 echo "Installing relevance_rails gem into $RAILS_APP gemset..."
-gem install relevance_rails-*.gem 
+gem install relevance_rails-*.gem
 echo "Done."
 
 rm -Rf ./$RAILS_APP
@@ -81,23 +81,23 @@ echo "Done."
 
 # rake provision:ec2 --> writes to config/ec2_instance.txt
 # TARGET_HOST=something
-# 
+#
 # echo "Generating relevance_rails deployment scripts..."
 # ./script/rails generate deployment staging $TARGET_HOST
 # git add .
 # git commit -m "Generated relevance_rails deployment scripts."
 # files_must_exist config/deploy/staging.rb
 # echo "Done."
-# 
+#
 # cap staging deploy:setup
 # cap staging deploy:cold
-# 
+#
 # cd ..
-# 
+#
 # HOST=$TARGET_HOST rake acceptance
 
 # IF failure, stop the instance
-#cd $RAILS_APP; bundle exec rake provision:stop 
+#cd $RAILS_APP; bundle exec rake provision:stop
 #IF success, terminate the instance
 #cd $RAILS_APP; bundle exec rake provision:terminate
 
