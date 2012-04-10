@@ -23,6 +23,7 @@
 # end
 
 #####
+set -e 
 ./script/ci
 
 # at this point we've generated an app
