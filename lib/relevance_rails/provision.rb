@@ -11,7 +11,7 @@ module RelevanceRails
     end
 
     def self.stop_ec2
-      return unless Thor::Shell::Basic.new.yes?("Are you sure you want to shut down EC2 instance #{instance_id}?")
+      return unless ENV["FORCE"] == "true" || Thor::Shell::Basic.new.yes?("Are you sure you want to shut down EC2 instance #{instance_id}?")
       puts "Shutting down EC2 instance #{instance_id}..."
       server = fog_connection.servers.get(instance_id)
       server.stop
@@ -20,7 +20,7 @@ module RelevanceRails
     end
 
     def self.destroy_ec2
-      return unless Thor::Shell::Basic.new.yes?("Are you sure you want to destroy EC2 instance #{instance_id}?")
+      return unless ENV["FORCE"] == "true" || Thor::Shell::Basic.new.yes?("Are you sure you want to destroy EC2 instance #{instance_id}?")
       puts "Destroying EC2 instance #{instance_id}..."
       server = fog_connection.servers.get(instance_id)
       server.destroy
