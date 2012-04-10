@@ -30,6 +30,11 @@ module RelevanceRails
       puts "Done!"
     end
 
+    def self.current_dns
+      server = fog_connection.servers.get(instance_id)
+      puts server.reload.dns_name
+    end
+
     private
 
     def self.instance_id

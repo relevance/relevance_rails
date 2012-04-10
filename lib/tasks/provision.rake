@@ -21,4 +21,9 @@ namespace :provision do
   task :destroy do
     RelevanceRails::Provision.destroy_ec2
   end
+  
+  desc 'Return the current public DNS name for your previously-provisioned EC2 instance'
+  task :current_dns do
+    RelevanceRails::Provision.current_dns
+  end
 end
