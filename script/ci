@@ -3,9 +3,9 @@
 # Function to sanity-check generators since Rails 3.x does not
 # give a non-zero exist code if generators fail
 function files_must_exist {
-  for checked_file in $*; do
-    if [ ! -e $checked_file ]; then
-      echo "$checked_file didn't exist!"
+  for checked_file in "$@"; do
+    if [ ! -e "$checked_file" ]; then
+      echo "'$checked_file' didn't exist!"
       exit 1
     fi
   done
@@ -14,9 +14,9 @@ function files_must_exist {
 # Function to sanity-check generators since Rails 3.x does not
 # give a non-zero exist code if generators fail
 function files_must_NOT_exist {
-  for checked_file in $*; do
-    if [ -e $checked_file ]; then
-      echo "$checked_file still exists!"
+  for checked_file in "$@"; do
+    if [ -e "$checked_file" ]; then
+      echo "'$checked_file' still exists!"
       exit 1
     fi
   done
@@ -31,7 +31,7 @@ rvm use "ruby-1.9.2@relevance_rails"
 
 echo "DEBUG: using gemset: `rvm gemset name`"
 
-# exit if any statement fails; 
+# exit if any statement fails;
 # must be set AFTER loading RVM
 set -e
 
@@ -41,11 +41,11 @@ bundle exec rake spec
 
 echo "Building new relevance_rails gem..."
 rm -Rf relevance_rails-*.gem
-gem build --verbose relevance_rails.gemspec 
+gem build --verbose relevance_rails.gemspec
 echo "Done"
 
-# NOTE: Manual install of just-built gem to workaround bundler wanting 
-# it to live on rubygems.org. 
+# NOTE: Manual install of just-built gem to workaround bundler wanting
+# it to live on rubygems.org.
 # NOTE: RVM 1.x doesn't work with "set -e", so you have to unset/set it.
 set +e
 rvm --force gemset delete $RAILS_APP
@@ -53,14 +53,14 @@ rvm gemset create $RAILS_APP
 rvm gemset use $RAILS_APP
 set -e
 
-if [ `gem list relevance_rails --installed` = "true" ]; then
+if $(gem list relevance_rails --installed); then
   echo "Removing old relevance_rails gem..."
-  gem uninstall --verbose --all --executables relevance_rails 
+  gem uninstall --verbose --all --executables relevance_rails
   echo "Done"
 fi
 
 echo "Installing relevance_rails gem into $RAILS_APP gemset..."
-gem install relevance_rails-*.gem 
+gem install relevance_rails-*.gem
 echo "Done."
 
 rm -Rf ./$RAILS_APP
@@ -85,4 +85,3 @@ git add .
 git commit -m "Generated relevance_rails deployment scripts."
 files_must_exist config/deploy/staging.rb
 echo "Done."
-

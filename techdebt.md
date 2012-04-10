@@ -9,6 +9,8 @@
 ** when generating an app with --database=postgresql, provision_config
    generator intermittently fails at the beginning with different gem not found
    errors. Generating the app more than once or inspecting the problem solves it
+** provision_config generator intermittently can't detect current working directory which breaks
+   git commands. Current solution of sprinkling Dir.chdir is a bandaid at best.
 
 * Provisioning an instance
 ** Don't hardcode path to chef binstub, caused by ubuntu installing weirdness
