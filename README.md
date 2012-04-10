@@ -74,7 +74,7 @@ server:
 Now just provision your instance:
 
 ```sh
-$ rake provision:ec2_server NAME=qa
+$ rake provision:ec2_and_generate NAME=qa
 $ cap qa deploy:setup deploy
 ```
 
