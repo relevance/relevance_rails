@@ -46,7 +46,6 @@ module RelevanceRails
 
     def self.provision_ec2_instances(name)
       puts "Provisioning an instance..."
-      original_timeout = Fog.timeout
       Fog.timeout = 60
       server = fog_connection.servers.create(config['server']['creation_config'])
       fog_connection.tags.create(:key => 'Name',
@@ -78,7 +77,6 @@ module RelevanceRails
 
       puts "Server Instance: #{server.id}"
       puts "Server IP: #{server.public_ip_address}"
-      Fog.timeout = original_timeout
       server
     end
 
