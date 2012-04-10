@@ -39,6 +39,14 @@ $ rails g provision_config
 $ rails g provision_config postgresql
 ```
 
+Configuring bundled ssh keys
+----------------------------
+
+By default, relevance_rails bundles all your keys from `ssh-add -L` with your instance. For bundling
+additional keys, you can create a ~/.relevance_rails/keys_git_url file and point it to a git repo that
+has additional keys. Keys in that git repo should exist as top level *.pub files. You *MUST* have at
+least one key to provision.
+
 Provisioning on EC2
 -------------------
 
@@ -66,7 +74,7 @@ server:
 Now just provision your instance:
 
 ```sh
-$ rake provision:ec2_server NAME=qa
+$ rake provision:ec2_and_generate NAME=qa
 $ cap qa deploy:setup deploy
 ```
 

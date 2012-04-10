@@ -20,6 +20,7 @@ role :db,  "#{hostname}", :primary => true
       else
         stages = eval($1)
         stages << name
+        stages.uniq!
         stage_array_contents = stages.map{|stage| "\"#{stage}\""}.join(', ')
         new_contents << "set :stages, [#{stage_array_contents}]\n"
       end
