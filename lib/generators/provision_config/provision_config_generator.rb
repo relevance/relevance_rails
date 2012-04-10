@@ -54,8 +54,13 @@ class ProvisionConfigGenerator < Rails::Generators::Base
   end
 
   def create_rvmrc
-    create_file('provision/.rvmrc', File.read(Rails.root.join('.rvmrc')), :force => true)
-    git :add => 'provision/.rvmrc'
+    if File.exists?(rvmrc = Rails.root.join('.rvmrc'))
+      create_file('provision/.rvmrc', File.read(rvmrc), :force => true)
+      git :add => 'provision/.rvmrc'
+    else
+      remove_file 'provision/.rvmrc'
+      git :rm => 'provision/.rvmrc'
+    end
   end
 
   def commit_changes
