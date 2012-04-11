@@ -7,7 +7,16 @@ module RelevanceRails
         puts "RelevanceRails #{RelevanceRails::VERSION}"
       else
         add_default_options! argv
-        exec 'rails', *argv
+        if ENV['rvm_path'].nil?
+          exec 'rails', *argv
+        else
+          $LOAD_PATH.unshift "#{ENV['rvm_path']}/lib"
+          require 'rvm'
+          env = RVM::Environment.current
+          env.gemset_create(argv[1])
+          
+          exec "#{RVM::Environment.current_ruby_string}@#{argv[1]}",'-S','rails', *argv
+        end
       end
     end
 
