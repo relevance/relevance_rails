@@ -12,12 +12,15 @@ function stop_server_and_exit {
   fi  
 }
 
+echo "RVM is now using:` rvm current`"
+
 set -e
 ./script/ci 
 set +e 
 
 source "$HOME/.rvm/scripts/rvm"
 rvm gemset use $RAILS_APP
+echo "RVM is now using:` rvm current`"
 builtin cd $RAILS_APP
 
 echo "Provisioning an EC2 instance..."
@@ -51,6 +54,7 @@ echo "Done."
 
 builtin cd -
 rvm gemset use relevance_rails
+echo "RVM is now using:` rvm current`"
 
 echo "Running the acceptance tests against our newly-created server..."
 ACCEPTANCE_HOST=$TARGET_HOST rake acceptance --trace
