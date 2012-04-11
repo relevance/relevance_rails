@@ -5,6 +5,7 @@ class DeploymentGenerator < Rails::Generators::NamedBase
   def write_stage_file
     create_file "config/deploy/#{name}.rb", <<-DEPLOY_STAGE
 set :user, 'deploy'
+set :use_sudo, false
 
 role :web, "#{hostname}"
 role :app, "#{hostname}"
