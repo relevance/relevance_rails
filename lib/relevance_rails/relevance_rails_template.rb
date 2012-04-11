@@ -42,8 +42,9 @@ git :add => "."
 git :commit => "-a -m 'Initial commit'"
 
 inside destination_root do
-  env = RVM::Environment.new("#{ruby_version}@#{app_name}")
-  env.system('rails','g','provision_config',db)
+  #env = RVM::Environment.new("#{ruby_version}@#{app_name}")
+  exec "#{ruby_version}@#{app_name}", '-S', 'rails', 'g', 'provision_config', db
+  #env.exec('rails','g','provision_config',db)
   #generate(:provision_config, db)
 end
 
