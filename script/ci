@@ -29,8 +29,6 @@ TARGET_HOST="placeholder.example.com"
 source "$HOME/.rvm/scripts/rvm"
 rvm use "ruby-1.9.2@relevance_rails"
 
-echo "DEBUG: using gemset: `rvm gemset name`"
-
 # exit if any statement fails;
 # must be set AFTER loading RVM
 set -e
