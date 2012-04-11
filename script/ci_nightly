@@ -12,7 +12,9 @@ function stop_server_and_exit {
   fi  
 }
 
+set -e
 ./script/ci 
+set +e 
 
 source "$HOME/.rvm/scripts/rvm"
 rvm gemset use $RAILS_APP
