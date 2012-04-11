@@ -19,13 +19,15 @@ set -e
 set +e 
 
 source "$HOME/.rvm/scripts/rvm"
-rvm gemset use $RAILS_APP
+rvm use "ruby-1.9.2@$RAILS_APP"
 echo "RVM is now using:` rvm current`"
+
 builtin cd $RAILS_APP
 
 echo "Provisioning an EC2 instance..."
 rm -f $EC2_MEMENTO_FILE
-bundle exec rake provision:ec2 NAME="Nightly Build Testing - `date "+%Y-%m-%d %H:%M:%S"` " --trace
+server_name="Nightly Build Testing - `date "+%Y-%m-%d %H:%M:%S"` "
+bundle exec rake --trace provision:ec2 NAME=$server_name
 [ $? -ne 0 ] && stop_server_and_exit
 echo "Done!"
 
