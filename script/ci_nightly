@@ -29,7 +29,7 @@ builtin cd $RAILS_APP
 echo "Provisioning an EC2 instance..."
 rm -f $EC2_MEMENTO_FILE
 server_name="Nightly Build Testing - `date "+%Y-%m-%d %H:%M:%S"` "
-bundle exec rake --trace provision:ec2 NAME=$server_name
+bundle exec rake --trace provision:ec2 NAME="$server_name"
 [ $? -ne 0 ] && stop_server_and_exit
 echo "Done!"
 
