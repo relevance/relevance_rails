@@ -8,8 +8,10 @@ function stop_server_and_exit {
     echo "Stopping newly-created server..."
     bundle exec rake provision:stop FORCE=true --trace
     echo "Done."
-    exit 1
   fi  
+
+  echo "BUILD FAILED"
+  exit 1
 }
 
 echo "RVM is now using:` rvm current`"
