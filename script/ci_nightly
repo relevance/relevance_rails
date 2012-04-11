@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Set the DISPLAY variable if not already set
+: ${DISPLAY:=":1"}
+# Allows firefox to use display
+export DISPLAY
+
 RAILS_APP="app_for_ci"
 EC2_MEMENTO_FILE="config/ec2_instance.txt"
 
