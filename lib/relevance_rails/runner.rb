@@ -3,7 +3,9 @@ require 'relevance_rails'
 module RelevanceRails
   class Runner
     def self.start(argv=ARGV)
-      if argv.delete '--version'
+      if argv.empty? || argv[0] == '--help' || argv[0] == '-h'
+        print_help
+      elsif argv.delete '--version'
         puts "RelevanceRails #{RelevanceRails::VERSION}"
       elsif argv[0] == 'new'
         add_default_options! argv
@@ -21,6 +23,24 @@ module RelevanceRails
     end
 
     private
+
+    def self.print_help
+      puts <<-STR
+Usage: relevance_rails new APP [OPTIONS]
+
+Options:
+
+-d, --database <database>: Generate dependencies, configuration, and deployments
+                           for database, only supports mysql (default) and
+                           postgresql
+
+When invoked in an RVM shell, the new project and newly provisioned servers will
+inherit the current ruby. The new project will get its own gemset.
+
+When invoked in other contexts, newly provisioned servers will attempt to
+install a ruby which matches the ruby executing the relevance_rails process.
+STR
+    end
 
     def self.setup_rvm(app_name)
       rvm_version = `rvm --version`[/rvm (\d\.\d+\.\d+)/, 1].to_s
