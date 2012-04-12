@@ -1,0 +1,79 @@
+#!/bin/bash
+
+# Set the DISPLAY variable if not already set
+: ${DISPLAY:=":1"}
+# Allows firefox to use display
+export DISPLAY
+
+RAILS_APP="app_for_ci"
+EC2_MEMENTO_FILE="config/ec2_instance.txt"
+
+function stop_server_and_exit {
+  if [ -f $EC2_MEMENTO_FILE ]; then
+    echo "Stopping newly-created server..."
+    bundle exec rake provision:stop FORCE=true --trace
+    echo "Done."
+  fi  
+
+  echo "BUILD FAILED"
+  exit 1
+}
+
+echo "RVM is now using:` rvm current`"
+
+set -e
+./script/ci 
+set +e 
+
+source "$HOME/.rvm/scripts/rvm"
+rvm use "ruby-1.9.2@$RAILS_APP"
+echo "RVM is now using:` rvm current`"
+
+builtin cd $RAILS_APP
+
+echo "Provisioning an EC2 instance..."
+rm -f $EC2_MEMENTO_FILE
+server_name="Nightly Build Testing - `date "+%Y-%m-%d %H:%M:%S"` "
+bundle exec rake --trace provision:ec2 NAME="$server_name"
+[ $? -ne 0 ] && stop_server_and_exit
+echo "Done!"
+
+echo "Determine the EC2 instance's DNS name..."
+TARGET_HOST=`bundle exec rake provision:current_dns`
+[ $? -ne 0 ] && stop_server_and_exit
+echo "Done."
+
+echo "Generating relevance_rails deployment scripts..."
+./script/rails generate deployment staging $TARGET_HOST --force
+[ $? -ne 0 ] && stop_server_and_exit
+git add .
+git commit -m "Generated relevance_rails deployment scripts for $TARGET_HOST."
+[ $? -ne 0 ] && stop_server_and_exit
+echo "Done."
+ 
+echo "Capistrano: setup..."
+bundle exec cap staging deploy:setup
+[ $? -ne 0 ] && stop_server_and_exit
+echo "Done."
+ 
+echo "Capistrano: deploying..."
+bundle exec cap staging deploy:cold
+[ $? -ne 0 ] && stop_server_and_exit
+echo "Done."
+
+builtin cd -
+rvm gemset use relevance_rails
+echo "RVM is now using:` rvm current`"
+
+echo "Running the acceptance tests against our newly-created server..."
+ACCEPTANCE_HOST=$TARGET_HOST rake acceptance --trace
+[ $? -ne 0 ] && stop_server_and_exit
+echo "Done."
+
+builtin cd $RAILS_APP
+rvm gemset use $RAILS_APP
+
+echo "Terminating our newly-created server..."
+bundle exec rake provision:destroy FORCE=true --trace 
+echo "Done!"
+

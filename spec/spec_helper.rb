@@ -55,5 +55,4 @@ end
 
 Capybara.current_driver = :selenium
 Capybara.run_server = false
-#Capybara.app_host = 'http://' + (ENV["ACCEPTANCE_HOST"] || 'localhost:3000')
-Capybara.app_host = ENV["ACCEPTANCE_HOST"] || 'http://localhost:3000'
+Capybara.app_host = 'http://' + (ENV["ACCEPTANCE_HOST"] || 'localhost:3000')

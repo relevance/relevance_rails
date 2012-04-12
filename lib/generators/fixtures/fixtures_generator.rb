@@ -11,7 +11,9 @@ STR
 %h1 WELCOME HOME
 STR
     create_file "app/views/relevance_rails/db.html.haml", <<-STR
-%h1.database= ActiveRecord::Base.connection.current_database
+= conn = ActiveRecord::Base.connection
+= results = conn.execute("select 4200+42 as advanced_math")
+%h1.advanced_math= results.first["advanced_math"]
 STR
   end
 

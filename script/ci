@@ -28,8 +28,7 @@ TARGET_HOST="placeholder.example.com"
 # Setup RVM
 source "$HOME/.rvm/scripts/rvm"
 rvm use "ruby-1.9.2@relevance_rails"
-
-echo "DEBUG: using gemset: `rvm gemset name`"
+echo "RVM is now using:` rvm current`"
 
 # exit if any statement fails;
 # must be set AFTER loading RVM
@@ -51,6 +50,7 @@ set +e
 rvm --force gemset delete $RAILS_APP
 rvm gemset create $RAILS_APP
 rvm gemset use $RAILS_APP
+echo "RVM is now using:` rvm current`"
 set -e
 
 if $(gem list relevance_rails --installed); then
@@ -68,6 +68,7 @@ relevance_rails new $RAILS_APP --database=postgresql
 
 # NOTE: this does NOT change the RVM gemset; we set it manually above
 builtin cd $RAILS_APP
+echo "RVM is now using:` rvm current`"
 
 files_must_NOT_exist public/index.html
 files_must_exist config/database.yml provision/dna.json config/deploy.rb config/deploy/recipes/deploy.rb
@@ -79,25 +80,9 @@ git commit -m "Generated relevance_rails fixtures."
 files_must_exist app/assets/javascripts/relevance_rails.js.coffee app/assets/stylesheets/relevance_rails.css.scss
 echo "Done."
 
-# rake provision:ec2 --> writes to config/ec2_instance.txt
-# TARGET_HOST=something
-#
-# echo "Generating relevance_rails deployment scripts..."
-# ./script/rails generate deployment staging $TARGET_HOST
-# git add .
-# git commit -m "Generated relevance_rails deployment scripts."
-# files_must_exist config/deploy/staging.rb
-# echo "Done."
-#
-# cap staging deploy:setup
-# cap staging deploy:cold
-#
-# cd ..
-#
-# HOST=$TARGET_HOST rake acceptance
-
-# IF failure, stop the instance
-#cd $RAILS_APP; bundle exec rake provision:stop
-#IF success, terminate the instance
-#cd $RAILS_APP; bundle exec rake provision:terminate
-
+echo "Generating relevance_rails deployment scripts..."
+./script/rails generate deployment staging $TARGET_HOST
+git add .
+git commit -m "Generated relevance_rails deployment scripts for $TARGET_HOST."
+files_must_exist config/deploy/staging.rb
+echo "Done."
