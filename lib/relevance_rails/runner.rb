@@ -10,15 +10,10 @@ module RelevanceRails
         if ENV['rvm_path'].nil?
           exec 'rails', *argv
         else
-          $LOAD_PATH.unshift "#{ENV['rvm_path']}/lib"
-          require 'rvm'
-          RelevanceRails.rvm_exists = true
-
           app_name = argv[1]
-          env = RVM::Environment.current
-          env.gemset_create(app_name)
+          env = setup_rvm app_name
 
-          new_rvm_string = "#{RVM::Environment.current_ruby_string}@#{app_name}"
+          new_rvm_string = "#{env.environment_name.split('@')[0]}@#{app_name}"
           install_relevance_rails argv, new_rvm_string, env.environment_name
           exec new_rvm_string,'-S','rails', *argv
         end
@@ -26,6 +21,15 @@ module RelevanceRails
     end
 
     private
+
+    def self.setup_rvm(app_name)
+      $LOAD_PATH.unshift "#{ENV['rvm_path']}/lib"
+      require 'rvm'
+
+      env = RVM::Environment.current
+      env.gemset_create(app_name)
+      env
+    end
 
     def self.install_relevance_rails(argv, new_rvm_string, current_gemset)
       child_env = RVM::Environment.new(new_rvm_string)
