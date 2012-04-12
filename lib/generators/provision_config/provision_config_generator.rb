@@ -19,6 +19,12 @@ class ProvisionConfigGenerator < Rails::Generators::Base
     Dir.chdir(destination_root)
   end
 
+  def check_git_status
+    unless `git status`[/working directory clean/]
+      abort "Your git repository is dirty. Clean up before reinvoking this command."
+    end
+  end
+
   def check_authorized_keys
     if (@authorized_keys = fetch_keys).empty?
       abort "No ssh keys were found! Check ssh-add -L and your keys_git_url config."
