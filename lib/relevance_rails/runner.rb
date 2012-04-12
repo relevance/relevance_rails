@@ -23,6 +23,11 @@ module RelevanceRails
     private
 
     def self.setup_rvm(app_name)
+      rvm_version = `rvm --version`[/rvm (\d\.\d+\.\d+)/, 1].to_s
+      if rvm_version < '1.10.2'
+        abort "Rvm version 1.10.2 or greater is required. Run 'rvm get stable'"
+      end
+
       $LOAD_PATH.unshift "#{ENV['rvm_path']}/lib"
       require 'rvm'
 
