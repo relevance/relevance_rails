@@ -111,7 +111,11 @@ standard `--database=postgresql` Rails option, relevance_rails will use PostgreS
 Maintainer Notes
 ----------------
 
-When QAing or doing local development of this gem, the gem must be built and installed locally.
+When QAing or doing local development of this gem, the gem must be built locally and creating
+an app needs an additional flag.
+
+    $ gem build relevance_rails.gemspec && gem install relevance_rails-VERSION.gem
+    $ relevance_rails new APP --relevance-dev
 
 In order to test deployment, use the example below to package the relevance_rails gem:
 
