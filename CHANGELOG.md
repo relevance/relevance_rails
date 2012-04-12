@@ -1,3 +1,13 @@
+*v0.1.1.alpha*
+
+* Ruby manager agnostic - can use rvm, system ruby or rbenv
+* new APP --relevance-dev for simple QA development
+* Fix sudo on deploy user
+* provision rvmrc mirrors app's rvmrc
+* existing app users have a deploy that just works
+* fail fast in more places
+* stop and destroy provisioned instances from commandline
+
 *v0.1.0*
 
 * Provisioning can be done on existing apps
