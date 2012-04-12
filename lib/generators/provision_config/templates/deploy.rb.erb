@@ -2,16 +2,17 @@ require 'bundler/capistrano'
 require 'capistrano_colors'
 
 set :application, "<%= name %>"
-set :repository,  "."
-set :deploy_via, :copy
 
 set :scm, :git
+set :repository,  "."
 
 set :deploy_to, "/var/www/apps/#{ application }"
+set :deploy_via, :copy
+set :copy_exclude, '.git/*'
+
 default_run_options[:pty] = true
 set :ssh_options, { :paranoid => false, :forward_agent => true }
 
-set :copy_exclude, '.git/*'
 
 set :stages, %w(vagrant)
 set :default_stage, 'vagrant'
