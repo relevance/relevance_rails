@@ -95,7 +95,7 @@ Vagrant instance should be up at 172.25.5.5.
 Supported Ruby Versions
 -----------------------
 
-Currently both Ruby 1.9.x and REE 1.8.7 are supported. relevance_rails
+Currently both Ruby 1.9.x, 1.8.x and REE 1.8.7 are supported. relevance_rails
 configures your Rails app (and Chef provisioning scripts) to require the version
 of Ruby you used to invoke the relevance_rails executable. If relevance_rails is run
 in a non-rvm environment, all installation occurs in the current gem environment. If in rvm,
