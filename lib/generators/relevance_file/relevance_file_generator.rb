@@ -21,7 +21,9 @@ class RelevanceFileGenerator < Rails::Generators::NamedBase
   end
 
   def create_rvmrc
-    create_file ".rvmrc", "rvm use #{RelevanceRails.rvm_version}@#{name}"
+    if RelevanceRails.rvm_exists
+      create_file ".rvmrc", "rvm use #{RelevanceRails.ruby_version}@#{name}"
+    end
   end
 
   def create_rspec

@@ -12,9 +12,11 @@ module RelevanceRails
         else
           $LOAD_PATH.unshift "#{ENV['rvm_path']}/lib"
           require 'rvm'
+          RelevanceRails.rvm_exists = true
+
           env = RVM::Environment.current
           env.gemset_create(argv[1])
-          
+
           exec "#{RVM::Environment.current_ruby_string}@#{argv[1]}",'-S','rails', *argv
         end
       end
