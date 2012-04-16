@@ -43,8 +43,9 @@ STR
     end
 
     def self.setup_rvm(app_name)
-      rvm_version = `rvm --version`[/rvm (\d\.\d+\.\d+)/, 1].to_s
-      if rvm_version < '1.10.2'
+      rvm_version = Gem::Version.new(`rvm --version`[/rvm (\d\.\d+\.\d+)/, 1].to_s)
+
+      if rvm_version < Gem::Version.new('1.10.2')
         abort "Rvm version 1.10.2 or greater is required. Run 'rvm get stable'"
       end
 
