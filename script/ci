@@ -40,35 +40,25 @@ bundle exec rake spec
 
 echo "Building new relevance_rails gem..."
 rm -Rf relevance_rails-*.gem
-gem build --verbose relevance_rails.gemspec
+rake install --trace
 echo "Done"
 
-# NOTE: Manual install of just-built gem to workaround bundler wanting
-# it to live on rubygems.org.
-# NOTE: RVM 1.x doesn't work with "set -e", so you have to unset/set it.
+echo "Ensure we remove any old app directory or gemset..."
+rm -Rf ./$RAILS_APP
 set +e
 rvm --force gemset delete $RAILS_APP
-rvm gemset create $RAILS_APP
+set -e
+echo "Done"
+
+relevance_rails new $RAILS_APP --database=postgresql --relevance-dev
+
+# NOTE: this does NOT change the RVM gemset; we set it manually below
+builtin cd $RAILS_APP
+
+set +e
 rvm gemset use $RAILS_APP
 echo "RVM is now using:` rvm current`"
 set -e
-
-if $(gem list relevance_rails --installed); then
-  echo "Removing old relevance_rails gem..."
-  gem uninstall --verbose --all --executables relevance_rails
-  echo "Done"
-fi
-
-echo "Installing relevance_rails gem into $RAILS_APP gemset..."
-gem install relevance_rails-*.gem
-echo "Done."
-
-rm -Rf ./$RAILS_APP
-relevance_rails new $RAILS_APP --database=postgresql
-
-# NOTE: this does NOT change the RVM gemset; we set it manually above
-builtin cd $RAILS_APP
-echo "RVM is now using:` rvm current`"
 
 files_must_NOT_exist public/index.html
 files_must_exist config/database.yml provision/dna.json config/deploy.rb config/deploy/recipes/deploy.rb

@@ -95,9 +95,11 @@ Vagrant instance should be up at 172.25.5.5.
 Supported Ruby Versions
 -----------------------
 
-Currently both Ruby 1.9.x and REE 1.8.7 are supported via RVM.  relevance_rails
+Currently both Ruby 1.9.x and REE 1.8.7 are supported. relevance_rails
 configures your Rails app (and Chef provisioning scripts) to require the version
-of Ruby you used to invoke the relevance_rails executable.
+of Ruby you used to invoke the relevance_rails executable. If relevance_rails is run
+in a non-rvm environment, all installation occurs in the current gem environment. If in rvm,
+the app is installed into its own rvm gemset.
 
 Supported Databases
 -------------------
@@ -109,18 +111,11 @@ standard `--database=postgresql` Rails option, relevance_rails will use PostgreS
 Maintainer Notes
 ----------------
 
-When QAing or doing local development of this gem, the gem must be built and installed locally.
+When QAing or doing local development of this gem, the gem must be built locally and creating
+an app needs an additional flag.
 
-In order to test deployment, use the example below to package the relevance_rails gem:
-
-    # Given a relevance_rails app "app" lives in "~/src/app"
-    # And the relevance_rails source lives in "~/src/relevance_rails"
-    ~/src/relevance_rails $ gem build relevance_rails.gemspec
-    ~/src/relevance_rails $ cd ~/src/app
-    ~/src/app $ gem install ../relevance_rails/relevance_rails-0.0.7.gem
-    ~/src/app $ bundle package
-    ~/src/app $ git add vendor/cache
-    ~/src/app $ git commit -m "Package gems"
+    $ gem build relevance_rails.gemspec && gem install relevance_rails-VERSION.gem
+    $ relevance_rails new APP --relevance-dev
 
 Caveats
 -------

@@ -15,14 +15,16 @@ module RelevanceRails::ChefDNA
   end
 
   def self.set_ruby(json)
-    if RelevanceRails.rvm_version =~ /^ree-(.*)/i
+    if RelevanceRails.ruby_version =~ /^ree-(.*)/i
       json['ruby_enterprise']['version'] = $1
       json['ruby_enterprise']['url'] = "http://rubyenterpriseedition.googlecode.com/files/ruby-enterprise-#{$1}"
       appstack_index = json['run_list'].find_index {|e| e[/^role\[.*_appstack\]$/] }
       json['run_list'][appstack_index] = 'role[enterprise_appstack]'
-    elsif RelevanceRails.rvm_version =~ /^ruby-(.*)/i
-      json['ruby']['version'] = $1
-      json['ruby']['url'] = "http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-#{$1}.tar.gz"
+    elsif RelevanceRails.ruby_version =~ /^ruby-(.*)/i
+      full_version = $1
+      json['ruby']['version'] = full_version
+      major_version = full_version[/(\d\.\d).*/, 1]
+      json['ruby']['url'] = "http://ftp.ruby-lang.org/pub/ruby/#{major_version}/ruby-#{full_version}.tar.gz"
       appstack_index = json['run_list'].find_index {|e| e[/^role\[.*_appstack\]$/] }
       json['run_list'][appstack_index] = 'role[ruby_appstack]'
     else

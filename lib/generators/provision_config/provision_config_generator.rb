@@ -2,6 +2,7 @@ require 'relevance_rails'
 require 'rails/generators'
 
 class ProvisionConfigGenerator < Rails::Generators::Base
+  include RelevanceRails::GeneratorOverrides
 
   desc "This generator configures the provision sub-directory with appropriate files."
 
@@ -16,6 +17,12 @@ class ProvisionConfigGenerator < Rails::Generators::Base
   # version. This sets the directory explicitly beforehand.
   def change_directory
     Dir.chdir(destination_root)
+  end
+
+  def check_git_status
+    unless `git status`[/working directory clean/]
+      abort "Your git repository is dirty. Clean up before reinvoking this command."
+    end
   end
 
   def check_authorized_keys
