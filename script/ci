@@ -40,7 +40,7 @@ bundle exec rake spec
 
 echo "Building new relevance_rails gem..."
 rm -Rf relevance_rails-*.gem
-gem build --verbose relevance_rails.gemspec
+rake install --trace
 echo "Done"
 
 echo "Ensure we remove any old app directory or gemset..."
