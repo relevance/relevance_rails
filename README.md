@@ -24,7 +24,7 @@ $ gem install relevance_rails
 $ relevance_rails new <your new project>
 ````
 
-For existing projects, first add to your Gemfile:
+For existing projects, please note we *only* support Rails 3.2 and higher!  To add to an existing project, first add to your Gemfile:
 
     group :development, :test do
       gem 'relevance_rails'
