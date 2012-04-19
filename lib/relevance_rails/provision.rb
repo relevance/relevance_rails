@@ -76,7 +76,7 @@ module RelevanceRails
       run_command(server, 'sudo apt-get -y install rubygems1.8')
       puts "Installing chef..."
       run_command(server, 'sudo gem install chef --no-ri --no-rdoc --version 0.10.8')
-      puts "Copying chef resources from provision directory.."
+      puts "Copying chef resources from provision directory..."
       server.scp("#{Rails.root.join('provision')}/", '/tmp/chef-solo', :recursive => true)
       puts "Converging server, this may take a while (10-20 minutes)"
       run_command(server, 'cd /tmp/chef-solo && sudo /var/lib/gems/1.8/bin/chef-solo -c solo.rb -j dna.json')
