@@ -4,7 +4,7 @@ namespace :provision do
   desc 'Provision a deployable EC2 instance and generate Capistrano config'
   task :ec2_and_generate do
     server = RelevanceRails::Provision.create_ec2(ENV['NAME'])
-    system('rails', 'generate', 'deployment', ENV['NAME'], server.public_ip_address)
+    system('rails', 'generate', 'deployment', "#{Rails.application.class.parent_name} #{ENV['NAME']}", server.public_ip_address)
   end
 
   desc 'Provision a deployable EC2 instance'

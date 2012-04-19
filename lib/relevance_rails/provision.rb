@@ -55,7 +55,7 @@ module RelevanceRails
       puts "Provisioning an instance..."
       server = fog_connection.servers.create(config['server']['creation_config'])
       fog_connection.tags.create(:key => 'Name',
-                      :value => "#{Rails.application.class.parent_name} #{name}",
+                      :value => "#{name}",
                       :resource_id => server.id)
       server.private_key = config['server']['private_key']
       
