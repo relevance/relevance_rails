@@ -5,6 +5,9 @@ require 'relevance_rails/fog_ext/ssh'
 
 module RelevanceRails
   module Provision
+    class AptInstallError < StandardError
+    end
+
     def self.create_ec2(name = nil)
       abort "Please provide a $NAME" unless name
       server = provision_ec2_instances(name)
@@ -58,7 +61,7 @@ module RelevanceRails
                       :value => "#{name}",
                       :resource_id => server.id)
       server.private_key = config['server']['private_key']
-      
+
       File.open("config/ec2_instance.txt", "w") do |f|
         f.puts(server.id)
       end
@@ -66,14 +69,9 @@ module RelevanceRails
       puts "Provisioned!"
       server
     end
-    
+
     def self.run_commands(server)
-      puts "Updating apt cache..."
-      run_command(server, 'sudo apt-get update')
-      puts "Installing ruby..."
-      run_command(server, 'sudo apt-get -y install ruby')
-      puts "Installing rubygems..."
-      run_command(server, 'sudo apt-get -y install rubygems1.8')
+      apt_installs(server)
       puts "Installing chef..."
       run_command(server, 'sudo gem install chef --no-ri --no-rdoc --version 0.10.8')
       puts "Copying chef resources from provision directory..."
@@ -86,6 +84,45 @@ module RelevanceRails
       server
     end
 
+    def self.retry_block(times, errors, failure)
+      succeeded = false
+      attempts = 0
+      last_error = nil
+      until succeeded || attempts > times
+        begin
+          retval = yield
+          succeeded = true
+        rescue *errors => e
+          puts failure
+          attempts +=1
+          last_error = e
+        end
+      end
+      if succeeded
+        return retval
+      else
+        raise last_error
+      end
+    end
+
+    def self.apt_installs(server)
+      retry_block(2, [AptInstallError], "Apt-cache came from corrupt mirror, retrying update...") do
+        puts "Updating apt cache..."
+        run_apt_command(server, 'sudo apt-get update')
+        puts "Installing ruby..."
+        run_apt_command(server, 'sudo apt-get -y install ruby')
+        puts "Installing rubygems..."
+        run_apt_command(server, 'sudo apt-get -y install rubygems1.8')
+      end
+    rescue AptInstallError
+      exit 1
+    end
+
+    def self.run_apt_command(server, command)
+      jobs = server.ssh(command)
+      raise AptInstallError unless jobs_succeeded?(jobs)
+    end
+
     def self.run_command(server, command)
       jobs = server.ssh(command)
       exit 1 unless jobs_succeeded?(jobs)
@@ -94,22 +131,10 @@ module RelevanceRails
     def self.wait_for_ssh(server)
       puts "Waiting for ssh connectivity..."
       server.wait_for { ready? }
-      succeeded = false
-      attempts = 0
-      last_error = nil
-      until succeeded || attempts > 4
+      retry_block(4, [Errno::ECONNREFUSED, Timeout::Error], "Connecting to Amazon refused. Retrying...") do
         sleep 10
-        begin
-          # Should be checked for compatability across rubies
-          Timeout.timeout(60) { server.ssh('ls') }
-          succeeded = true
-        rescue Errno::ECONNREFUSED, Timeout::Error => e
-          puts "Connecting to Amazon refused. Attempt #{attempts+1}..."
-          attempts += 1
-          last_error = e
-        end
+        Timeout.timeout(60) { server.ssh('ls') }
       end
-      raise last_error unless succeeded
       puts "Server up and listening for SSH!"
     end
 
