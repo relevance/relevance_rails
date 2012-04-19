@@ -19,9 +19,14 @@ describe RelevanceRails::Provision do
   end
 
   describe '.wait_for_ssh' do
-    it 'retries up to 5 times, then fails' do
-      server = mock("server")
+
+    let(:server) { mock("server") }
+
+    before do
       server.should_receive(:wait_for).ordered.and_return(true)
+    end
+
+    it 'retries if the first attempt fails' do
       server.should_receive(:ssh).ordered.and_raise(Errno::ECONNREFUSED)
       server.should_receive(:ssh).ordered.and_return([job(:command => 'echo')])
       RelevanceRails::Provision.should_receive(:sleep).twice.with(10).and_return(10)
@@ -29,10 +34,18 @@ describe RelevanceRails::Provision do
         capture_stdout { RelevanceRails::Provision.wait_for_ssh(server) }
       end.to_not raise_error
     end
+
+    it 'retries up to five times, then fails' do
+      server.should_receive(:ssh).ordered.exactly(5).times.and_raise(Errno::ECONNREFUSED)
+      RelevanceRails::Provision.should_receive(:sleep).exactly(5).times.with(10).and_return(10)
+      expect do
+        capture_stdout { RelevanceRails::Provision.wait_for_ssh(server) }
+      end.to raise_error SystemExit
+    end
   end
 
   describe '.apt_installs' do
-    it 'retries twice, then fails' do
+    it 'retries if the first attempt fails' do
       server = mock("server")
       server.should_receive(:ssh).ordered.with('sudo apt-get update').and_return([job(:command => 'sudo apt-get update')])
       server.should_receive(:ssh).ordered.with('sudo apt-get -y install ruby').and_return([job(:status => 1, :command => 'sudo apt-get -y install ruby')])
@@ -42,6 +55,14 @@ describe RelevanceRails::Provision do
       expect do
         capture_stdout { RelevanceRails::Provision.apt_installs(server) }
       end.to_not raise_error
+    end
+
+    it 'tries twice, then fails' do
+      server = mock("server")
+      server.should_receive(:ssh).exactly(3).with('sudo apt-get update').and_return([job(:status => 1, :command => 'sudo apt-get update')])
+      expect do
+        capture_stdout { RelevanceRails::Provision.apt_installs(server) }
+      end.to raise_error SystemExit
     end
   end
 end

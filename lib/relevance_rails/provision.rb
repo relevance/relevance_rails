@@ -88,7 +88,7 @@ module RelevanceRails
       succeeded = false
       attempts = 0
       last_error = nil
-      until succeeded || attempts > times
+      until succeeded || attempts > times-1
         begin
           retval = yield
           succeeded = true
@@ -101,12 +101,12 @@ module RelevanceRails
       if succeeded
         return retval
       else
-        raise last_error
+        exit 1
       end
     end
 
     def self.apt_installs(server)
-      retry_block(2, [AptInstallError], "Apt-cache came from corrupt mirror, retrying update...") do
+      retry_block(3, [AptInstallError], "Apt-cache came from corrupt mirror, retrying update...") do
         puts "Updating apt cache..."
         run_apt_command(server, 'sudo apt-get update')
         puts "Installing ruby..."
@@ -114,8 +114,6 @@ module RelevanceRails
         puts "Installing rubygems..."
         run_apt_command(server, 'sudo apt-get -y install rubygems1.8')
       end
-    rescue AptInstallError
-      exit 1
     end
 
     def self.run_apt_command(server, command)
@@ -131,7 +129,7 @@ module RelevanceRails
     def self.wait_for_ssh(server)
       puts "Waiting for ssh connectivity..."
       server.wait_for { ready? }
-      retry_block(4, [Errno::ECONNREFUSED, Timeout::Error], "Connecting to Amazon refused. Retrying...") do
+      retry_block(5, [Errno::ECONNREFUSED, Timeout::Error], "Connecting to Amazon refused. Retrying...") do
         sleep 10
         Timeout.timeout(60) { server.ssh('ls') }
       end
