@@ -6,7 +6,7 @@ module RelevanceRails
   module Provision
     class AptInstallError < StandardError
     end
-    
+
     def self.create_ec2(name = nil)
       abort "Please provide a $NAME" unless name
       server = provision_ec2_instances(name)
