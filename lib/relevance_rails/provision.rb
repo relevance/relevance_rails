@@ -57,7 +57,7 @@ module RelevanceRails
                       :value => "#{Rails.application.class.parent_name} #{name}",
                       :resource_id => server.id)
       server.private_key = config['server']['private_key']
-      
+
       File.open("config/ec2_instance.txt", "w") do |f|
         f.puts(server.id)
       end
@@ -65,14 +65,8 @@ module RelevanceRails
       puts "Provisioned!"
       server
     end
-    
+
     def self.run_commands(server)
-      puts "Updating apt cache..."
-      run_command(server, 'sudo apt-get update')
-      puts "Installing ruby..."
-      run_command(server, 'sudo apt-get -y install ruby')
-      puts "Installing rubygems..."
-      run_command(server, 'sudo apt-get -y install rubygems1.8')
       puts "Installing chef..."
       run_command(server, 'sudo gem install chef --no-ri --no-rdoc --version 0.10.8')
       puts "Copying chef resources from provision directory.."
@@ -83,6 +77,28 @@ module RelevanceRails
       puts "Server Instance: #{server.id}"
       puts "Server IP: #{server.public_ip_address}"
       server
+    end
+
+    def self.apt_installs(server)
+      succeeded = false
+      attempts = 0
+      last_error = nil
+      until succeeded || attempts > 2
+        begin
+          puts "Updating apt cache..."
+          run_command(server, 'sudo apt-get update')
+          puts "Installing ruby..."
+          run_command(server, 'sudo apt-get -y install ruby')
+          puts "Installing rubygems..."
+          run_command(server, 'sudo apt-get -y install rubygems1.8')
+          succeeded = true
+        rescue Error => e
+          puts "Apt-cache came from corrupt mirror, retrying update..."
+          attempts += 1
+          last_error = e
+        end
+      end
+      raise last_error unless succeeded
     end
 
     def self.run_command(server, command)
