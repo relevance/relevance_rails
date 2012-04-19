@@ -1,3 +1,10 @@
+*v0.1.2*
+
+* add streaming output from chef convergence using a fog monkeypatch
+* retry apt-get command failures
+* add --help
+* add support for rvm > 1.12.0
+
 *v0.1.1.alpha*
 
 * Ruby manager agnostic - can use rvm, system ruby or rbenv
