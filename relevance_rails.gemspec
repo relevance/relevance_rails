@@ -24,7 +24,12 @@ Gem::Specification.new do |s|
 
   # specify any dependencies here; for example:
   s.add_runtime_dependency 'rails', '~> 3.2'
-  s.add_runtime_dependency 'fog', '~> 1.3.0'
+
+  # be aware that we're monkey-patching fog in fog_ext/ssh.rb;
+  # if we update fog, that monkey-patch might need to be
+  # revisited
+  s.add_runtime_dependency 'fog', '1.3.1'
+
   s.add_runtime_dependency 'thor', '~> 0.14.6'
   s.add_development_dependency 'pry'
   s.add_development_dependency 'capybara'
