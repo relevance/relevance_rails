@@ -1,9 +1,13 @@
 require 'fog'
 require 'thor'
 require 'timeout'
+require 'relevance_rails/fog_ext/ssh'
 
 module RelevanceRails
   module Provision
+    class AptInstallError < StandardError
+    end
+
     def self.create_ec2(name = nil)
       abort "Please provide a $NAME" unless name
       server = provision_ec2_instances(name)
@@ -54,10 +58,10 @@ module RelevanceRails
       puts "Provisioning an instance..."
       server = fog_connection.servers.create(config['server']['creation_config'])
       fog_connection.tags.create(:key => 'Name',
-                      :value => "#{Rails.application.class.parent_name} #{name}",
+                      :value => "#{name}",
                       :resource_id => server.id)
       server.private_key = config['server']['private_key']
-      
+
       File.open("config/ec2_instance.txt", "w") do |f|
         f.puts(server.id)
       end
@@ -65,17 +69,12 @@ module RelevanceRails
       puts "Provisioned!"
       server
     end
-    
+
     def self.run_commands(server)
-      puts "Updating apt cache..."
-      run_command(server, 'sudo apt-get update')
-      puts "Installing ruby..."
-      run_command(server, 'sudo apt-get -y install ruby')
-      puts "Installing rubygems..."
-      run_command(server, 'sudo apt-get -y install rubygems1.8')
+      apt_installs(server)
       puts "Installing chef..."
       run_command(server, 'sudo gem install chef --no-ri --no-rdoc --version 0.10.8')
-      puts "Copying chef resources from provision directory.."
+      puts "Copying chef resources from provision directory..."
       server.scp("#{Rails.root.join('provision')}/", '/tmp/chef-solo', :recursive => true)
       puts "Converging server, this may take a while (10-20 minutes)"
       run_command(server, 'cd /tmp/chef-solo && sudo /var/lib/gems/1.8/bin/chef-solo -c solo.rb -j dna.json')
@@ -83,6 +82,43 @@ module RelevanceRails
       puts "Server Instance: #{server.id}"
       puts "Server IP: #{server.public_ip_address}"
       server
+    end
+
+    def self.retry_block(times, errors, failure)
+      succeeded = false
+      attempts = 0
+      last_error = nil
+      until succeeded || attempts > times-1
+        begin
+          retval = yield
+          succeeded = true
+        rescue *errors => e
+          puts failure
+          attempts +=1
+          last_error = e
+        end
+      end
+      if succeeded
+        return retval
+      else
+        exit 1
+      end
+    end
+
+    def self.apt_installs(server)
+      retry_block(3, [AptInstallError], "Apt-cache came from corrupt mirror, retrying update...") do
+        puts "Updating apt cache..."
+        run_apt_command(server, 'sudo apt-get update')
+        puts "Installing ruby..."
+        run_apt_command(server, 'sudo apt-get -y install ruby')
+        puts "Installing rubygems..."
+        run_apt_command(server, 'sudo apt-get -y install rubygems1.8')
+      end
+    end
+
+    def self.run_apt_command(server, command)
+      jobs = server.ssh(command)
+      raise AptInstallError unless jobs_succeeded?(jobs)
     end
 
     def self.run_command(server, command)
@@ -93,22 +129,10 @@ module RelevanceRails
     def self.wait_for_ssh(server)
       puts "Waiting for ssh connectivity..."
       server.wait_for { ready? }
-      succeeded = false
-      attempts = 0
-      last_error = nil
-      until succeeded || attempts > 4
+      retry_block(5, [Errno::ECONNREFUSED, Timeout::Error], "Connecting to Amazon refused. Retrying...") do
         sleep 10
-        begin
-          # Should be checked for compatability across rubies
-          Timeout.timeout(60) { server.ssh('ls') }
-          succeeded = true
-        rescue Errno::ECONNREFUSED, Timeout::Error => e
-          puts "Connecting to Amazon refused. Attempt #{attempts+1}..."
-          attempts += 1
-          last_error = e
-        end
+        Timeout.timeout(60) { server.ssh('ls') }
       end
-      raise last_error unless succeeded
       puts "Server up and listening for SSH!"
     end
 
