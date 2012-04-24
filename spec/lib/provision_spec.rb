@@ -57,9 +57,9 @@ describe RelevanceRails::Provision do
       end.to_not raise_error
     end
 
-    it 'tries twice, then fails' do
+    it 'tries five times and then aborts' do
       server = mock("server")
-      server.should_receive(:ssh).exactly(3).with('sudo apt-get update').and_return([job(:status => 1, :command => 'sudo apt-get update')])
+      server.should_receive(:ssh).exactly(5).with('sudo apt-get update').and_return([job(:status => 1, :command => 'sudo apt-get update')])
       expect do
         capture_stdout { RelevanceRails::Provision.apt_installs(server) }
       end.to raise_error SystemExit
