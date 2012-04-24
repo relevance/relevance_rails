@@ -26,7 +26,7 @@ set -e
 set +e 
 
 source "$HOME/.rvm/scripts/rvm"
-rvm use "ruby-1.9.2@$RAILS_APP"
+rvm use "$RUBY_VERSION@$RAILS_APP"
 echo "RVM is now using:` rvm current`"
 
 builtin cd $RAILS_APP

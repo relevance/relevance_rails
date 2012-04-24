@@ -27,7 +27,7 @@ TARGET_HOST="placeholder.example.com"
 
 # Setup RVM
 source "$HOME/.rvm/scripts/rvm"
-rvm use "ruby-1.9.2@relevance_rails"
+rvm use "$RUBY_VERSION@relevance_rails"
 echo "RVM is now using:` rvm current`"
 
 # exit if any statement fails;
