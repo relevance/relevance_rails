@@ -35,8 +35,18 @@ describe RelevanceRails::Provision do
       end.to_not raise_error
     end
 
-    it 'retries up to five times, then fails' do
-      server.should_receive(:ssh).ordered.exactly(5).times.and_raise(Errno::ECONNREFUSED)
+    it 'prints a message for each retry attempt' do
+      server.should_receive(:ssh).ordered.exactly(3).times.and_raise(Errno::ECONNREFUSED)
+      server.should_receive(:ssh).ordered.and_return([job(:command => 'echo')])
+      RelevanceRails::Provision.stub(:sleep).and_return(10)
+      stdout = capture_stdout { RelevanceRails::Provision.wait_for_ssh(server) }
+      stdout.should include 'Attempting retry 1...'
+      stdout.should include 'Attempting retry 2...'
+      stdout.should include 'Attempting retry 3...'
+    end
+
+    it 'retries up to five times, then aborts' do
+      server.should_receive(:ssh).exactly(5).times.and_raise(Errno::ECONNREFUSED)
       RelevanceRails::Provision.should_receive(:sleep).exactly(5).times.with(10).and_return(10)
       expect do
         capture_stdout { RelevanceRails::Provision.wait_for_ssh(server) }
@@ -57,9 +67,9 @@ describe RelevanceRails::Provision do
       end.to_not raise_error
     end
 
-    it 'tries five times and then aborts' do
+    it 'retries up to five times, then aborts' do
       server = mock("server")
-      server.should_receive(:ssh).exactly(5).with('sudo apt-get update').and_return([job(:status => 1, :command => 'sudo apt-get update')])
+      server.should_receive(:ssh).exactly(5).times.with('sudo apt-get update').and_return([job(:status => 1, :command => 'sudo apt-get update')])
       expect do
         capture_stdout { RelevanceRails::Provision.apt_installs(server) }
       end.to raise_error SystemExit
