@@ -12,7 +12,7 @@ STR
 STR
     create_file "app/views/relevance_rails/db.html.haml", <<-STR
 = conn = ActiveRecord::Base.connection
-= results = conn.execute("select 4200+42 as advanced_math")
+= results = conn.select_all("select 4200+42 as advanced_math")
 %h1.advanced_math= results.first["advanced_math"]
 STR
   end
