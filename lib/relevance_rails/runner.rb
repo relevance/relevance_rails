@@ -72,7 +72,9 @@ STR
       else
         child_env.run('gem', 'install', 'relevance_rails', '-v', RelevanceRails::VERSION)
       end
-      abort "Unable to install relevance_rails into the new gemset" if result.exit_status != 0
+      if result.exit_status != 0
+        abort "Unable to install relevance_rails into the new gemset. Failed with:\n#{result.stderr}"
+      end
     end
 
     def self.add_default_options!(argv)
