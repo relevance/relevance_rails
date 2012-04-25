@@ -21,12 +21,22 @@ function stop_server_and_exit {
 
 echo "RVM is now using:` rvm current`"
 
+if [ -z $CI_RUBY_VERSION ]; then
+  echo 'You must specify $CI_RUBY_VERSION!'
+  exit 1
+fi
+
+if [ -z $CI_DATABASE ]; then
+  echo 'You must specify $CI_DATABASE!'
+  exit 1
+fi
+
 set -e
 ./script/ci 
 set +e 
 
 source "$HOME/.rvm/scripts/rvm"
-rvm use "$RUBY_VERSION@$RAILS_APP"
+rvm use "$CI_RUBY_VERSION@$RAILS_APP"
 echo "RVM is now using:` rvm current`"
 
 builtin cd $RAILS_APP

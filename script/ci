@@ -25,9 +25,13 @@ function files_must_NOT_exist {
 RAILS_APP="app_for_ci"
 TARGET_HOST="placeholder.example.com"
 
+# Set overrideable defaults
+: ${CI_DATABASE:="postgresql"}
+: ${CI_RUBY_VERSION:="ruby-1.9.2"}
+
 # Setup RVM
 source "$HOME/.rvm/scripts/rvm"
-rvm use "$RUBY_VERSION@relevance_rails"
+rvm use "$CI_RUBY_VERSION@relevance_rails"
 echo "RVM is now using:` rvm current`"
 
 # exit if any statement fails;
@@ -50,7 +54,7 @@ rvm --force gemset delete $RAILS_APP
 set -e
 echo "Done"
 
-relevance_rails new $RAILS_APP --database=$RAILS_DB --relevance-dev
+relevance_rails new $RAILS_APP --database=$CI_DATABASE --relevance-dev
 
 # NOTE: this does NOT change the RVM gemset; we set it manually below
 builtin cd $RAILS_APP
