@@ -73,7 +73,9 @@ STR
         child_env.run('gem', 'install', 'relevance_rails', '-v', RelevanceRails::VERSION)
       end
       if result.exit_status != 0
-        abort "Unable to install relevance_rails into the new gemset. Failed with:\n#{result.stderr}"
+        abort "Unable to install relevance_rails into the new gemset. " +
+          "\nExit code: #{result.exit_status}" +
+          "\nFailed with:\n#{result.stderr}"
       end
     end
 
