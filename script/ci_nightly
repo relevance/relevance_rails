@@ -13,10 +13,17 @@ function stop_server_and_exit {
     echo "Stopping newly-created server..."
     bundle exec rake provision:stop FORCE=true --trace
     echo "Done."
+  else
+    echo "No server to stop (i.e. can't find config/ec2_instance.txt)."
   fi  
 
   echo "BUILD FAILED"
   exit 1
+}
+
+function cd_rails_app {
+  builtin cd $RAILS_APP
+  rvm gemset use $RAILS_APP
 }
 
 echo "RVM is now using:` rvm current`"
@@ -40,19 +47,19 @@ rvm use "$CI_RUBY_VERSION@$RAILS_APP"
 echo "RVM is now using:` rvm current`"
 
 builtin cd $RAILS_APP
-
+ 
 echo "Provisioning an EC2 instance..."
 rm -f $EC2_MEMENTO_FILE
 server_name="Nightly Build Testing - `date "+%Y-%m-%d %H:%M:%S"` "
 bundle exec rake --trace provision:ec2 NAME="$server_name"
 [ $? -ne 0 ] && stop_server_and_exit
 echo "Done!"
-
+ 
 echo "Determine the EC2 instance's DNS name..."
 TARGET_HOST=`bundle exec rake provision:current_dns`
 [ $? -ne 0 ] && stop_server_and_exit
 echo "Done."
-
+ 
 echo "Generating relevance_rails deployment scripts..."
 ./script/rails generate deployment staging $TARGET_HOST --force
 [ $? -ne 0 ] && stop_server_and_exit
@@ -77,11 +84,10 @@ echo "RVM is now using:` rvm current`"
 
 echo "Running the acceptance tests against our newly-created server..."
 ACCEPTANCE_HOST=$TARGET_HOST rake acceptance --trace
-[ $? -ne 0 ] && stop_server_and_exit
+[ $? -ne 0 ] && cd_rails_app && stop_server_and_exit
 echo "Done."
 
-builtin cd $RAILS_APP
-rvm gemset use $RAILS_APP
+cd_rails_app
 
 echo "Terminating our newly-created server..."
 bundle exec rake provision:destroy FORCE=true --trace 
