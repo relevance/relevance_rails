@@ -29,8 +29,9 @@ Gem::Specification.new do |s|
   # if we update fog, that monkey-patch might need to be
   # revisited
   s.add_runtime_dependency 'fog', '1.3.1'
-
   s.add_runtime_dependency 'thor', '~> 0.14.6'
+  s.add_runtime_dependency 'slushy', '~> 0.1.0'
+
   s.add_development_dependency 'pry'
   s.add_development_dependency 'capybara'
   s.add_development_dependency 'rspec'

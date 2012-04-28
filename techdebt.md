@@ -13,8 +13,6 @@
    git commands. Current solution of sprinkling Dir.chdir is a bandaid at best.
 
 * Provisioning an instance
-** Don't hardcode path to chef binstub, caused by ubuntu installing weirdness
 ** Make the deployment generator idempotent
 ** Better error handling when the aws.yml is not present
 ** On an uncaught exception, destroy the ec2 instances (?)
-** RelevanceRails::Provision.wait_for_ssh intermittently hangs
