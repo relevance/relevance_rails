@@ -1,8 +1,11 @@
 module RelevanceRails::ChefDNA
   def self.gene_splice(json, database)
     set_ruby(json)
+    set_rubygems json, rubygems_version
     set_database(json, database)
   end
+
+  private
 
   def self.set_database(json, database)
     if database == 'postgresql'
@@ -30,5 +33,20 @@ module RelevanceRails::ChefDNA
     else
       raise "Your ruby is NOT SUPPORTED. Please use ree or ruby."
     end
+  end
+
+  def self.set_rubygems(json, gem_version)
+    if RelevanceRails.ruby_version =~ /^ree-/i
+      json['ruby_enterprise']['gems_version'] = gem_version
+    elsif RelevanceRails.ruby_version =~ /^ruby-/i
+      json['ruby']['gems_version'] = gem_version
+    else
+      raise "Your ruby is NOT SUPPORTED. Please use ree or ruby."
+    end
+  end
+
+  def self.rubygems_version
+    require 'rubygems' unless defined? Gem
+    Gem::VERSION
   end
 end
