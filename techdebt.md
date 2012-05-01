@@ -8,7 +8,7 @@
    errors. Generating the app more than once or inspecting the problem solves it
 ** provision_config generator intermittently can't detect current working directory which breaks
    git commands. Current solution of sprinkling Dir.chdir is a bandaid at best.
-
-* Provisioning an instance
 ** Make the deployment generator idempotent
-** Better error handling when the aws.yml is not present
+** Have pg and mysql recipes depend on a unified gem install method. This method would call
+   gem_package for mri and ree_gem for ree. When this is done, we can add --dont-install-useful-gems
+   back to the ree installer.
