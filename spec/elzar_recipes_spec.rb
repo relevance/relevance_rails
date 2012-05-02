@@ -1,10 +1,12 @@
 require 'spec_helper'
 require 'fileutils'
+require 'relevance_rails/provision'
 
 describe "Elzar recipes" do
   let(:rails_app) { 'elzar_nightly_app' }
   let(:server_name) { "Elzar Nightly Build Testing - #{Time.now.strftime("%Y-%m-%d %H:%M:%S")}" }
   let(:database) { ENV['CI_DATABASE'] || 'mysql' }
+  let(:database_cmd) { { 'mysql' => 'mysql', 'postgresql' => 'psql'}[database] }
   let(:ruby_version) { ENV['CI_RUBY_VERSION'] || 'ruby-1.9.3-p125' }
 
   # wrapper around system
@@ -40,6 +42,17 @@ describe "Elzar recipes" do
     sh "relevance_rails new #{rails_app} --database=#{database} --relevance-dev"
   end
 
+  def ssh(cmd)
+    server = RelevanceRails::Provision.current_server
+    server.username = 'relevance'
+    server.ssh(cmd).first
+  end
+
+  def command_succeeds(cmd)
+    job = ssh cmd
+    job.status.should == 0
+  end
+
   before(:all) do
     create_new_app
     Dir.chdir rails_app
@@ -48,7 +61,26 @@ describe "Elzar recipes" do
     rake %[provision:ec2 NAME="#{server_name}" --trace]
   end
 
-  it "can handle the truth" do
-    true.should == true
+  it "installs the right ruby" do
+    job = ssh('/opt/relevance-ruby/bin/ruby -v')
+    version_number = ruby_version.sub(/^ruby/, '').tr('-', '')
+    job.stdout.should be_start_with("ruby #{version_number}")
+  end
+
+  it "installs the correct database" do
+    command_succeeds("#{database_cmd} --version")
+  end
+
+  it "creates a deploy user" do
+    command_succeeds("ls /home/deploy")
+  end
+
+  # TODO: get nginx version from elzar
+  it "creates nginx" do
+    command_succeeds("/opt/nginx-1.0.10/sbin/nginx -h")
+  end
+
+  it "creates a passenger config" do
+    command_succeeds("ls /etc/nginx/conf.d/passenger.conf")
   end
 end
