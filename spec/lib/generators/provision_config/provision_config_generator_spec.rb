@@ -56,12 +56,14 @@ describe ProvisionConfigGenerator do
     it "returns local keys when they exist" do
       subject.stub(:local_keys).and_return(["key-from-local-file"])
       subject.stub(:ssh_agent_keys).and_return(["key-from-ssh-agent"])
+      RelevanceRails::PublicKeyFetcher.stub(:public_keys).and_return([])
       subject.send(:fetch_keys).should == ["key-from-local-file"]
     end
 
     it "returns keys from ssh agent when local keys do NOT exist" do
       subject.stub(:local_keys).and_return([])
       subject.stub(:ssh_agent_keys).and_return(["key-from-ssh-agent"])
+      RelevanceRails::PublicKeyFetcher.stub(:public_keys).and_return([])
       subject.send(:fetch_keys).should == ["key-from-ssh-agent"]
     end
 
@@ -72,6 +74,7 @@ describe ProvisionConfigGenerator do
     end
 
     it "combines ssh agent keys with those from PublicKeyFetcher" do
+      subject.stub(:local_keys).and_return([])
       subject.stub(:ssh_agent_keys).and_return(["key-from-ssh-agent"])
       RelevanceRails::PublicKeyFetcher.stub(:public_keys).and_return(["key-from-git-repo"])
       subject.send(:fetch_keys).should == ["key-from-ssh-agent", "key-from-git-repo"]
