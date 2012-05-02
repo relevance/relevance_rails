@@ -38,13 +38,16 @@ describe ProvisionConfigGenerator do
 
   describe "#ssh_agent_keys" do
     it "retrieves keys from ssh agent" do
-      subject.should_receive("`").with("ssh-add -L").and_return("my-public-key\nanother-public-key")
+      subject.should_receive("`").with("ssh-add -L") do
+        system("true")
+        "my-public-key\nanother-public-key"
+      end
       subject.send(:ssh_agent_keys).should == ["my-public-key", "another-public-key"]
     end
 
     it "ignores output from ssh-add when execution fails" do
-      subject.stub("`").and_return do
-        system('exit 1')
+      subject.stub("`") do
+        system("false")
         # Actual message that comes back from failed call
         "The agent has no entities"
       end
