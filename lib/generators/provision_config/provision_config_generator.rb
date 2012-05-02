@@ -1,4 +1,5 @@
 require 'relevance_rails'
+require 'tempfile'
 require 'rails/generators'
 
 class ProvisionConfigGenerator < Rails::Generators::Base
@@ -27,7 +28,14 @@ class ProvisionConfigGenerator < Rails::Generators::Base
 
   def check_authorized_keys
     if (@authorized_keys = fetch_keys).empty?
-      abort "No ssh keys were found! Check ssh-add -L and your keys_git_url config."
+      abort <<-EOF
+No SSH public keys were found!
+
+To ensure you have remote access to your servers, an SSH public key must be available from at least one of these sources:
+- local file (~/.ssh/id_rsa.pub, ~/.ssh/id_dsa.pub, or ~/.ssh/id_ecdsa.pub)
+- ssh-agent (by running `ssh-add -L`)
+- public keys git repo (URL to repo specified in ~/.relevance_rails/key_git_url)
+      EOF
     end
   end
 
@@ -104,10 +112,24 @@ class ProvisionConfigGenerator < Rails::Generators::Base
     git :add => destination
   end
 
-
   def fetch_keys
-    local_keys = `ssh-add -L`.split("\n")
-    local_keys = [] unless $?.success?
-    (local_keys + RelevanceRails::PublicKeyFetcher.public_keys).uniq
+    keys = local_keys
+    keys = ssh_agent_keys if keys.empty?
+    keys += RelevanceRails::PublicKeyFetcher.public_keys
+    keys.uniq
+  end
+
+  def local_keys
+    key_files = [
+      File.expand_path("~/.ssh/id_dsa.pub"),
+      File.expand_path("~/.ssh/id_ecdsa.pub"),
+      File.expand_path("~/.ssh/id_rsa.pub"),
+    ]
+    key_files.select { |p| File.exist?(p) }.take(1).map { |p| File.read(p) }
+  end
+
+  def ssh_agent_keys
+    keys = `ssh-add -L`.split("\n")
+    $?.success? ? keys : []
   end
 end
