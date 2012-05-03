@@ -2,12 +2,13 @@ require 'spec_helper'
 require 'fileutils'
 require 'relevance_rails/provision'
 
-describe "Elzar recipes" do
+describe "Elzar recipes", :ci => true do
   let(:rails_app) { 'elzar_nightly_app' }
   let(:server_name) { "Elzar Nightly Build Testing - #{Time.now.strftime("%Y-%m-%d %H:%M:%S")}" }
   let(:database) { ENV['CI_DATABASE'] || 'mysql' }
   let(:database_cmd) { { 'mysql' => 'mysql', 'postgresql' => 'psql'}[database] }
   let(:ruby_version) { ENV['CI_RUBY_VERSION'] || 'ruby-1.9.3-p125' }
+  let(:ruby_bin) { '/opt/relevance-ruby/bin' }
 
   # wrapper around system
   def shell(cmd)
@@ -25,7 +26,7 @@ describe "Elzar recipes" do
   end
 
   def current_gemset
-    @current_gemset ||= 'relevance_spec2'
+    @current_gemset ||= 'relevance_rails'
   end
 
   def rake(cmd)
@@ -62,9 +63,9 @@ describe "Elzar recipes" do
   end
 
   it "installs the right ruby" do
-    job = ssh('/opt/relevance-ruby/bin/ruby -v')
+    job = ssh "#{ruby_bin}/ruby -v"
     version_number = ruby_version.sub(/^ruby/, '').tr('-', '')
-    job.stdout.should be_start_with("ruby #{version_number}")
+    job.stdout.start_with?("ruby #{version_number}").should be_true
   end
 
   it "installs the correct database" do
@@ -75,12 +76,17 @@ describe "Elzar recipes" do
     command_succeeds("ls /home/deploy")
   end
 
-  # TODO: get nginx version from elzar
-  it "creates nginx" do
-    command_succeeds("/opt/nginx-1.0.10/sbin/nginx -h")
+  it "creates nginx and configures it" do
+    # TODO: get nginx version from elzar
+    command_succeeds "/opt/nginx-1.0.10/sbin/nginx -h"
+    command_succeeds "ls /etc/nginx/nginx.conf"
+    command_succeeds "ls /etc/init.d/nginx"
+    command_succeeds "ls /etc/nginx/sites-enabled/#{rails_app}"
   end
 
-  it "creates a passenger config" do
-    command_succeeds("ls /etc/nginx/conf.d/passenger.conf")
+  it "installs passenger gem and configures it" do
+    command_succeeds "#{ruby_bin}/gem list passenger$ |grep passenger -q"
+    command_succeeds "ls /etc/nginx/conf.d/passenger.conf"
+    command_succeeds %[grep -q "passenger_ruby #{ruby_bin}/ruby;" /etc/nginx/conf.d/passenger.conf]
   end
 end
