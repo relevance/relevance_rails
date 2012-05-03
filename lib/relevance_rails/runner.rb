@@ -54,12 +54,18 @@ STR
         # in 1.12.0, so you don't use this trick anymore.
         $LOAD_PATH.unshift "#{ENV['rvm_path']}/lib"
       end
-
-      require 'rvm'
-
+      require_rvm
       env = RVM::Environment.current
       env.gemset_create(app_name)
       env
+    end
+
+    def self.require_rvm
+      require 'rvm'
+    rescue LoadError
+      puts "No rvm gem found. Installing rvm..."
+      system('gem install rvm')
+      require 'rvm'
     end
 
     def self.install_relevance_rails(argv, new_rvm_string, current_gemset)
