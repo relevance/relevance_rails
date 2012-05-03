@@ -17,7 +17,7 @@ describe RelevanceRails::Runner do
         '-S', 'rails', 'new', 'the_app', '-m',
         File.expand_path("../../../lib/relevance_rails/relevance_rails_template.rb", File.dirname(__FILE__)))
       RelevanceRails::Runner.should_receive(:install_relevance_rails)
-      env = mock :environment_name => '1.9.3@default'
+      env = mock(:environment_name => '1.9.3@default')
       RelevanceRails::Runner.should_receive(:setup_rvm).and_return(env)
       start('new', 'the_app')
     end

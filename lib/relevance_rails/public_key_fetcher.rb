@@ -3,8 +3,8 @@ require 'tmpdir'
 module RelevanceRails::PublicKeyFetcher
   def self.public_keys
     pubkeys = []
-    return pubkeys unless File.exist? user_git_url
-    git_url = File.read user_git_url
+    return pubkeys unless File.exist?(user_git_url)
+    git_url = File.read(user_git_url)
     return pubkeys unless git_url =~ /\/(.*)\.git/
     repo_name = $1
     Dir.mktmpdir('public_keys') { |dir|

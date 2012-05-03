@@ -8,10 +8,10 @@ module RelevanceRails::ChefDNA
 
   def self.set_database(json, database)
     if database == 'postgresql'
-      db_index = json['run_list'].find_index { |e| e == 'mysql::server' || e == 'role[postgres_database]'}
+      db_index = json['run_list'].find_index { |e| (e == 'mysql::server') || (e == 'role[postgres_database]')}
       json['run_list'][db_index] = 'role[postgres_database]'
-    elsif database.nil? || database == 'mysql'
-      db_index = json['run_list'].find_index { |e| e == 'mysql::server' || e == 'role[postgres_database]'}
+    elsif database.nil? || (database == 'mysql')
+      db_index = json['run_list'].find_index { |e| (e == 'mysql::server') || (e == 'role[postgres_database]')}
       json['run_list'][db_index] = 'mysql::server'
     end
   end
@@ -40,7 +40,7 @@ module RelevanceRails::ChefDNA
   end
 
   def self.rubygems_version
-    require 'rubygems' unless defined? Gem
+    require 'rubygems' unless defined?(Gem)
     Gem::VERSION
   end
 end

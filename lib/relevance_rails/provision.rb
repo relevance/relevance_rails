@@ -19,17 +19,17 @@ module RelevanceRails
     end
 
     def self.stop_ec2
-      return unless ENV["FORCE"] == "true" || Thor::Shell::Basic.new.yes?("Are you sure you want to shut down EC2 instance #{instance_id}?")
+      return unless (ENV["FORCE"] == "true") || Thor::Shell::Basic.new.yes?("Are you sure you want to shut down EC2 instance #{instance_id}?")
       puts "Shutting down EC2 instance #{instance_id}..."
-      slushy = Slushy::Instance.new fog_connection, instance_id
+      slushy = Slushy::Instance.new(fog_connection, instance_id)
       slushy.stop
       puts "Done!"
     end
 
     def self.destroy_ec2
-      return unless ENV["FORCE"] == "true" || Thor::Shell::Basic.new.yes?("Are you sure you want to destroy EC2 instance #{instance_id}?")
+      return unless (ENV["FORCE"] == "true") || Thor::Shell::Basic.new.yes?("Are you sure you want to destroy EC2 instance #{instance_id}?")
       puts "Destroying EC2 instance #{instance_id}..."
-      slushy = Slushy::Instance.new fog_connection, instance_id
+      slushy = Slushy::Instance.new(fog_connection, instance_id)
       slushy.terminate
       puts "Removing #{CONFIG_FILE}..."
       File.delete(CONFIG_FILE)

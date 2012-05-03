@@ -3,9 +3,9 @@ require 'relevance_rails'
 module RelevanceRails
   class Runner
     def self.start(argv=ARGV)
-      if argv.empty? || argv[0] == '--help' || argv[0] == '-h'
+      if argv.empty? || (argv[0] == '--help') || (argv[0] == '-h')
         print_help
-      elsif argv.delete '--version'
+      elsif argv.delete('--version')
         puts "RelevanceRails #{RelevanceRails::VERSION}"
       elsif argv[0] == 'new'
         add_default_options! argv
@@ -13,7 +13,7 @@ module RelevanceRails
           exec 'rails', *argv
         else
           app_name = argv[1]
-          env = setup_rvm app_name
+          env = setup_rvm(app_name)
 
           new_rvm_string = "#{env.environment_name.split('@')[0]}@#{app_name}"
           install_relevance_rails argv, new_rvm_string, env.environment_name
@@ -66,7 +66,7 @@ STR
       child_env = RVM::Environment.new(new_rvm_string)
       puts "Installing relevance_rails into the app's gemset..."
 
-      result = if argv.delete '--relevance-dev'
+      result = if argv.delete('--relevance-dev')
         rubygem = "#{ENV['rvm_path']}/gems/#{current_gemset}/cache/relevance_rails-#{RelevanceRails::VERSION}.gem"
         child_env.run('gem', 'install', rubygem)
       else

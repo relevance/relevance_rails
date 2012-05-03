@@ -65,7 +65,7 @@ To ensure you have remote access to your servers, an SSH public key must be avai
 
   def create_dna_json
     path = File.expand_path('provision/dna.json', destination_root)
-    json = JSON.parse File.binread(path)
+    json = JSON.parse(File.binread(path))
     json['rails_app']['name'] = name
     RelevanceRails::ChefDNA.gene_splice(json,database)
     create_file('provision/dna.json', JSON.generate(json), {:force => true})
