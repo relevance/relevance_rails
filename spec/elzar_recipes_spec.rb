@@ -38,7 +38,7 @@ describe "Elzar recipes", :ci => true do
   def create_new_app
     rake 'install --trace'
     FileUtils.rm_rf(rails_app)
-    rvm "--force gemset delete #{rails_app}"
+    # rvm "--force gemset delete #{rails_app}"
     sh "relevance_rails new #{rails_app} --database=#{database} --relevance-dev"
   end
 
@@ -58,7 +58,7 @@ describe "Elzar recipes", :ci => true do
     create_new_app
     Dir.chdir rails_app
     # actually switches the gemset
-    @current_gemset = rails_app
+    # @current_gemset = rails_app
     rake %[provision:ec2 NAME="#{server_name}" --trace]
   end
 
