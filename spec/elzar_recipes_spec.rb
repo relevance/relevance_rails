@@ -36,9 +36,6 @@ describe "Elzar recipes", :ci => true do
   end
 
   def create_new_app
-    rvm "use '#{ruby_version}@#{current_gemset}'"
-    sh 'gem install bundler'
-    sh 'bundle install'
     rake 'install --trace'
     FileUtils.rm_rf(rails_app)
     rvm "--force gemset delete #{rails_app}"
