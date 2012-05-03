@@ -56,8 +56,11 @@ To ensure you have remote access to your servers, an SSH public key must be avai
   end
 
   def create_authorized_key_data_bag
-    @authorized_keys.map! {|key| "\"#{key}\""}
-    template('authorized_keys.json.erb', 'provision/data_bags/deploy/authorized_keys.json', {:force => true})
+    content = {
+      "id"   => "authorized_keys",
+      "keys" => @authorized_keys,
+    }
+    create_file('provision/data_bags/deploy/authorized_keys.json', JSON.generate(content), {:force => true})
   end
 
   def create_dna_json
