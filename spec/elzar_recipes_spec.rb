@@ -19,10 +19,6 @@ describe "Elzar recipes", :ci => true do
     abort "Command '#{cmd}' failed" unless $?.success?
   end
 
-  def rvm(cmd)
-    shell %[bash -c "source ~/.rvm/scripts/rvm ; rvm #{cmd}"]
-  end
-
   def sh(cmd)
     shell "#{ruby_version}@#{current_gemset} -S #{cmd}"
   end
@@ -35,10 +31,10 @@ describe "Elzar recipes", :ci => true do
     sh "bundle exec rake #{cmd}"
   end
 
+  # New app is created in current gemset
   def create_new_app
     rake 'install --trace'
     FileUtils.rm_rf(rails_app)
-    # rvm "--force gemset delete #{rails_app}"
     sh "relevance_rails new #{rails_app} --database=#{database} --relevance-dev"
   end
 
@@ -57,8 +53,6 @@ describe "Elzar recipes", :ci => true do
   before(:all) do
     create_new_app
     Dir.chdir rails_app
-    # actually switches the gemset
-    # @current_gemset = rails_app
     rake %[provision:ec2 NAME="#{server_name}" --trace]
   end
 
