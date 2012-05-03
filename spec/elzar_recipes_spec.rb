@@ -8,7 +8,9 @@ describe "Elzar recipes", :ci => true do
   let(:database) { ENV['CI_DATABASE'] || 'mysql' }
   let(:database_cmd) { { 'mysql' => 'mysql', 'postgresql' => 'psql'}[database] }
   let(:ruby_version) { ENV['CI_RUBY_VERSION'] || 'ruby-1.9.3-p125' }
-  let(:ruby_bin) { '/opt/relevance-ruby/bin' }
+  let(:ruby_bin_path) {
+    ruby_version.start_with?('ree-') ? '/opt/ruby-enterprise/bin' : '/opt/relevance-ruby/bin'
+  }
 
   # wrapper around system
   def shell(cmd)
@@ -46,12 +48,13 @@ describe "Elzar recipes", :ci => true do
   def ssh(cmd)
     server = RelevanceRails::Provision.current_server
     server.username = 'relevance'
-    server.ssh(cmd).first
+    job = nil
+    capture_stdout { job = server.ssh(cmd).first }
+    job
   end
 
   def command_succeeds(cmd)
-    job = ssh cmd
-    job.status.should == 0
+    ssh(cmd).status.should == 0
   end
 
   before(:all) do
@@ -63,9 +66,13 @@ describe "Elzar recipes", :ci => true do
   end
 
   it "installs the right ruby" do
-    job = ssh "#{ruby_bin}/ruby -v"
-    version_number = ruby_version.sub(/^ruby/, '').tr('-', '')
-    job.stdout.start_with?("ruby #{version_number}").should be_true
+    job = ssh "#{ruby_bin_path}/ruby -v"
+    if ruby_version.start_with?('ree-')
+      job.stdout.include?("Ruby Enterprise Edition").should be_true
+    else
+      version_number = ruby_version.sub(/^ruby/, '').tr('-', '')
+      job.stdout.start_with?("ruby #{version_number}").should be_true
+    end
   end
 
   it "installs the correct database" do
@@ -85,8 +92,8 @@ describe "Elzar recipes", :ci => true do
   end
 
   it "installs passenger gem and configures it" do
-    command_succeeds "#{ruby_bin}/gem list passenger$ |grep passenger -q"
+    command_succeeds "#{ruby_bin_path}/gem list passenger$ |grep passenger -q"
     command_succeeds "ls /etc/nginx/conf.d/passenger.conf"
-    command_succeeds %[grep -q "passenger_ruby #{ruby_bin}/ruby;" /etc/nginx/conf.d/passenger.conf]
+    command_succeeds %[grep -q "passenger_ruby #{ruby_bin_path}/ruby;" /etc/nginx/conf.d/passenger.conf]
   end
 end
