@@ -125,11 +125,15 @@ To ensure you have remote access to your servers, an SSH public key must be avai
       File.expand_path("~/.ssh/id_ecdsa.pub"),
       File.expand_path("~/.ssh/id_rsa.pub"),
     ]
-    key_files.select { |p| File.exist?(p) }.take(1).map { |p| File.read(p) }
+    key_files.select { |p| File.exist?(p) }.take(1).map { |p| split_keys(File.read(p)) }.flatten(1)
   end
 
   def ssh_agent_keys
-    keys = `ssh-add -L`.split("\n")
+    keys = split_keys(`ssh-add -L`)
     $?.success? ? keys : []
+  end
+
+  def split_keys(s)
+    s.split("\n").reject { |k| k.blank? }
   end
 end

@@ -34,6 +34,16 @@ describe ProvisionConfigGenerator do
       write_fixture(File.expand_path("~/.ssh/id_rsa.pub"), "RSA-public-key")
       subject.send(:local_keys).should == ["DSA-public-key"]
     end
+
+    it "ignores trailing newlines" do
+      write_fixture(File.expand_path("~/.ssh/id_rsa.pub"), "RSA-public-key\n\n")
+      subject.send(:local_keys).should == ["RSA-public-key"]
+    end
+
+    it "ignores blank lines" do
+      write_fixture(File.expand_path("~/.ssh/id_rsa.pub"), "\n\nRSA-public-key\n\n\n")
+      subject.send(:local_keys).should == ["RSA-public-key"]
+    end
   end
 
   describe "#ssh_agent_keys" do
