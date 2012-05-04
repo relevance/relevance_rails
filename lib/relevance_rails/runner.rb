@@ -67,8 +67,10 @@ STR
       puts "Installing relevance_rails into the app's gemset..."
 
       result = if argv.delete('--relevance-dev')
-        rubygem = "#{ENV['rvm_path']}/gems/#{current_gemset}/cache/relevance_rails-#{RelevanceRails::VERSION}.gem"
-        child_env.run('gem', 'install', rubygem)
+        gem_dir = "#{ENV['rvm_path']}/gems/#{current_gemset}/cache"
+        child_env.run('gem', 'install', "#{gem_dir}/relevance_rails-#{RelevanceRails::VERSION}.gem")
+        require 'elzar'
+        child_env.run('gem', 'install', "#{gem_dir}/elzar-#{Elzar::VERSION}.gem")
       else
         child_env.run('gem', 'install', 'relevance_rails', '-v', RelevanceRails::VERSION)
       end
