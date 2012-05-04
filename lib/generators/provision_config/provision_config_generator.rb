@@ -1,6 +1,7 @@
 require 'relevance_rails'
 require 'tempfile'
 require 'rails/generators'
+require 'elzar'
 
 class ProvisionConfigGenerator < Rails::Generators::Base
   include RelevanceRails::GeneratorOverrides
@@ -47,14 +48,12 @@ To ensure you have remote access to your servers, an SSH public key must be avai
     git :commit => '-m "Add Capistrano files"'
   end
 
-  def fetch_elzar
-    git :remote => 'add -f elzar git://github.com/relevance/elzar.git'
-    git :merge => '-s ours --no-commit elzar/master'
-    git :"read-tree" => '--prefix=provision/ -u elzar/master'
-    gsub_file 'provision/Vagrantfile', /config\.vm\.host_name(\s+)= .*$/,
-      "config.vm.host_name\\1= '#{name.gsub('_','-')}.local'"
+  def create_provision_directory
+    Elzar.bam! :destination => 'provision', :ruby_version => RelevanceRails.ruby_version,
+      :database => database, :authorized_keys => @authorized_keys, :app_name => name
   end
 
+  # TODO: move next two methods to elzar
   def create_authorized_key_data_bag
     content = {
       "id"   => "authorized_keys",
