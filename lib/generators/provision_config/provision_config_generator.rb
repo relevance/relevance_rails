@@ -49,8 +49,9 @@ To ensure you have remote access to your servers, an SSH public key must be avai
   end
 
   def create_provision_directory
-    Elzar.bam! :destination => 'provision', :ruby_version => RelevanceRails.ruby_version,
-      :database => database, :authorized_keys => @authorized_keys, :app_name => name
+    Elzar.create_provision_directory Rails.root.join('provision'),
+      :ruby_version => RelevanceRails.ruby_version, :database => database,
+      :authorized_keys => @authorized_keys, :app_name => name
   end
 
   # TODO: move next two methods to elzar
