@@ -54,23 +54,6 @@ To ensure you have remote access to your servers, an SSH public key must be avai
       :authorized_keys => @authorized_keys, :app_name => name
   end
 
-  # TODO: move next two methods to elzar
-  def create_authorized_key_data_bag
-    content = {
-      "id"   => "authorized_keys",
-      "keys" => @authorized_keys,
-    }
-    create_file('provision/data_bags/deploy/authorized_keys.json', JSON.generate(content), {:force => true})
-  end
-
-  def create_dna_json
-    path = File.expand_path('provision/dna.json', destination_root)
-    content = JSON.parse(File.binread(path))
-    content['rails_app']['name'] = name
-    RelevanceRails::ChefDNA.gene_splice(content, database)
-    create_file('provision/dna.json', JSON.generate(content), {:force => true})
-  end
-
   def create_rvmrc
     if File.exists?(rvmrc = Rails.root.join('.rvmrc'))
       create_file('provision/.rvmrc', File.read(rvmrc), :force => true)
