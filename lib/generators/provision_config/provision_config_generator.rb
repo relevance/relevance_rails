@@ -82,10 +82,8 @@ To ensure you have remote access to your servers, an SSH public key must be avai
   end
 
   def commit_changes
-    git :add => 'provision/data_bags/deploy/authorized_keys.json'
-    git :add => 'provision/Vagrantfile'
-    git :add => 'provision/dna.json'
-    git :commit => '-m "Merge Elzar as our provision subdirectory"'
+    git :add => 'provision/'
+    git :commit => "-m 'Provision directory auto-created by elzar #{Elzar::VERSION}'"
   end
 
   private
