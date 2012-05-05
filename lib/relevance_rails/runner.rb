@@ -66,9 +66,9 @@ STR
 
       result = if argv.delete('--relevance-dev')
         gem_dir = "#{ENV['rvm_path']}/gems/#{current_gemset}/cache"
-        child_env.run('gem', 'install', "#{gem_dir}/relevance_rails-#{RelevanceRails::VERSION}.gem")
         require 'elzar'
         child_env.run('gem', 'install', "#{gem_dir}/elzar-#{Elzar::VERSION}.gem")
+        child_env.run('gem', 'install', "#{gem_dir}/relevance_rails-#{RelevanceRails::VERSION}.gem")
       else
         child_env.run('gem', 'install', 'relevance_rails', '-v', RelevanceRails::VERSION)
       end

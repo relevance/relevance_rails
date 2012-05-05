@@ -2,6 +2,7 @@ require 'fog'
 require 'thor'
 require 'relevance_rails/fog_ext/ssh'
 require 'slushy'
+require 'elzar'
 
 module RelevanceRails
   module Provision
@@ -11,7 +12,8 @@ module RelevanceRails
       abort "Please provide a $NAME" unless name
       slushy = provision_ec2_instances(name)
       slushy.bootstrap
-      slushy.converge Rails.root.join('provision')
+      tmpdir = Elzar.merge_and_create_temp_directory Rails.root.join('provision')
+      slushy.converge tmpdir
       server = slushy.server
       puts "Server Instance: #{server.id}"
       puts "Server IP: #{server.public_ip_address}"
