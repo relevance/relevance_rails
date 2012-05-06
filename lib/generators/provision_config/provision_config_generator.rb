@@ -56,11 +56,9 @@ To ensure you have remote access to your servers, an SSH public key must be avai
 
   def create_rvmrc
     if File.exists?(rvmrc = Rails.root.join('.rvmrc'))
-      create_file('provision/.rvmrc', File.read(rvmrc), :force => true)
-      git :add => 'provision/.rvmrc'
+      copy_file(rvmrc, 'provision/.rvmrc', :force => true)
     else
       remove_file 'provision/.rvmrc'
-      git :rm => 'provision/.rvmrc'
     end
   end
 
