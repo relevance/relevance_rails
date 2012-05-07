@@ -12,3 +12,4 @@
 ** Have pg and mysql recipes depend on a unified gem install method. This method would call
    gem_package for mri and ree_gem for ree. When this is done, we can add --dont-install-useful-gems
    back to the ree installer.
+** Upgrade to haml > 3.1.5 once AbstractController::Rendering#render_to_body bug is resolved
