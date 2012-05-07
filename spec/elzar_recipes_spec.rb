@@ -41,6 +41,7 @@ describe "Elzar recipes", :ci => true do
   def ssh(cmd)
     server = RelevanceRails::Provision.current_server
     server.username = 'relevance'
+    server.private_key = RelevanceRails::Provision.private_key
     job = nil
     capture_stdout { job = server.ssh(cmd).first }
     job
