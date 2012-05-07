@@ -24,7 +24,7 @@ describe "Elzar recipes", :ci => true do
   end
 
   def current_gemset
-    @current_gemset ||= 'relevance_rails'
+    @current_gemset ||= 'elzar_nightly'
   end
 
   def rake(cmd)
