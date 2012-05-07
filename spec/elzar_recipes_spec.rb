@@ -11,6 +11,7 @@ describe "Elzar recipes", :ci => true do
   let(:ruby_bin_path) {
     ruby_version.start_with?('ree-') ? '/opt/ruby-enterprise/bin' : '/opt/relevance-ruby/bin'
   }
+  let(:gemset) { ENV['CI_GEMSET'] || 'elzar_nightly' }
 
   # wrapper around system
   def shell(cmd)
@@ -20,11 +21,7 @@ describe "Elzar recipes", :ci => true do
   end
 
   def sh(cmd)
-    shell "#{ruby_version}@#{current_gemset} -S #{cmd}"
-  end
-
-  def current_gemset
-    @current_gemset ||= 'elzar_nightly'
+    shell "#{ruby_version}@#{gemset} -S #{cmd}"
   end
 
   def rake(cmd)
