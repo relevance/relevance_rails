@@ -13,3 +13,6 @@
    gem_package for mri and ree_gem for ree. When this is done, we can add --dont-install-useful-gems
    back to the ree installer.
 ** Upgrade to haml > 3.1.5 once AbstractController::Rendering#render_to_body bug is resolved
+** bundle exec rake elzar_nightly breaks due to fakefs being activated early in require chain.
+   Calling the rake task works fine locally and on CI. Attempting to not require fakefs in the
+   Gemfile didn't work.
