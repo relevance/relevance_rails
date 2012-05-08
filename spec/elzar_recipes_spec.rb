@@ -3,7 +3,7 @@ require 'fileutils'
 require 'relevance_rails/provision'
 
 describe "Elzar recipes", :ci => true do
-  let(:rails_app) { 'elzar_nightly_app' }
+  let(:rails_app) { ENV['RAILS_APP'] || 'elzar_nightly_app' }
   let(:server_name) { "Elzar Nightly (#{database} / #{ruby_version}) - #{Time.now.strftime("%Y-%m-%d %H:%M:%S")}" }
   let(:database) { ENV['CI_DATABASE'] || 'mysql' }
   let(:database_cmd) { { 'mysql' => 'mysql', 'postgresql' => 'psql'}[database] }

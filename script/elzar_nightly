@@ -1,0 +1,33 @@
+#!/bin/bash
+
+RAILS_APP="elzar_nightly_app"
+EC2_MEMENTO_FILE="config/ec2_instance.txt"
+
+function stop_server_and_exit {
+  if [ -f $EC2_MEMENTO_FILE ]; then
+    echo "Stopping newly-created server..."
+    bundle exec rake provision:stop FORCE=true --trace
+  else
+    echo "No server to stop (i.e. can't find config/ec2_instance.txt)."
+  fi  
+
+  echo "BUILD FAILED"
+  exit 1
+}
+
+source "$HOME/.rvm/scripts/rvm"
+export CI_GEMSET=elzar_nightly
+# Tests and app are all running in CI_GEMSET
+export NO_RVM=true
+
+rvm use "$CI_RUBY_VERSION@$CI_GEMSET"
+gem install bundler
+bundle install
+
+# DO NOT bundle exec rake - fakefs activation borks everything
+rake elzar_nightly
+
+[ $? -ne 0 ] && builtin cd $RAILS_APP && stop_server_and_exit
+
+builtin cd $RAILS_APP
+bundle exec rake provision:destroy FORCE=true --trace 
