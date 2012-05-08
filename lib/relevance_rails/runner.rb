@@ -9,7 +9,7 @@ module RelevanceRails
         puts "RelevanceRails #{RelevanceRails::VERSION}"
       elsif argv[0] == 'new'
         add_default_options! argv
-        if ENV['rvm_path'].nil?
+        if ENV['rvm_path'].nil? || ENV['NO_RVM']
           exec 'rails', *argv
         else
           app_name = argv[1]
@@ -54,9 +54,7 @@ STR
         # in 1.12.0, so you don't use this trick anymore.
         $LOAD_PATH.unshift "#{ENV['rvm_path']}/lib"
       end
-
       require 'rvm'
-
       env = RVM::Environment.current
       env.gemset_create(app_name)
       env

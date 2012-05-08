@@ -39,8 +39,15 @@ module RelevanceRails
     end
 
     def self.current_dns
-      server = fog_connection.servers.get(instance_id)
-      puts server.reload.dns_name
+      puts current_server.reload.dns_name
+    end
+
+    def self.current_server
+      fog_connection.servers.get(instance_id)
+    end
+
+    def self.private_key
+      config['server']['private_key']
     end
 
     private
@@ -63,7 +70,7 @@ module RelevanceRails
       conf['tags'] = {'Name' => name}
 
       slushy = Slushy::Instance.launch(fog_connection, conf)
-      slushy.server.private_key = config['server']['private_key']
+      slushy.server.private_key = private_key
       File.open(CONFIG_FILE, "w") { |f| f.puts(slushy.server.id) }
       puts "Provisioned!"
       slushy
