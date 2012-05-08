@@ -1,10 +1,7 @@
 source :rubygems
 
 gem 'rails', '~> 3.2.2'
-# Avoiding 3.1.5 which has a bug with aliasing
-# AbstractController::Rendering#render_to_body
-# https://github.com/haml/haml/issues/519
-gem 'haml', '>= 3.1.0', '<= 3.1.4'
+gem 'haml', '~> 3.1.4'
 gem 'configatron', '~> 2.8.3'
 gem 'airbrake', '~> 3.0.4'
 gem 'factory_girl_rails', '~> 1.2.0'
