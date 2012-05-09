@@ -1,3 +1,14 @@
+*v0.2.0*
+
+* Depend on slushy for provisioning
+* Depend on elzar as a gem
+** elzar's chef recipes stay in elzar
+** relevance_rails has no knowledge of elzar's recipe internals
+* Search for local ssh public keys before querying ssh-agent
+* Improved UX around retrying failed commands
+* Fix fixtures generator
+* Generated Rails app depends on haml <= 3.1.4 due to haml 3.1.5 bug
+
 *v0.1.2*
 
 * add streaming output from chef convergence using a fog monkeypatch
