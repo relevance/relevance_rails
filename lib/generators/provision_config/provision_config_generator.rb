@@ -102,12 +102,13 @@ To ensure you have remote access to your servers, an SSH public key must be avai
   end
 
   def local_keys
-    key_files = [
-      File.expand_path("~/.ssh/id_dsa.pub"),
+    default_keys.select { |p| File.exist?(p) }.take(1).map { |p| split_keys(File.read(p)) }.flatten(1)
+  end
+
+  def default_keys
+    [ File.expand_path("~/.ssh/id_dsa.pub"),
       File.expand_path("~/.ssh/id_ecdsa.pub"),
-      File.expand_path("~/.ssh/id_rsa.pub"),
-    ]
-    key_files.select { |p| File.exist?(p) }.take(1).map { |p| split_keys(File.read(p)) }.flatten(1)
+      File.expand_path("~/.ssh/id_rsa.pub") ]
   end
 
   def ssh_agent_keys

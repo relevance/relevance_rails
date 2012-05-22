@@ -1,47 +1,44 @@
 require 'spec_helper'
-require 'fileutils'
-require 'fakefs/spec_helpers'
 require 'generators/provision_config/provision_config_generator'
+require 'tempfile'
 
 describe ProvisionConfigGenerator do
   subject { ProvisionConfigGenerator.new(["name"]) }
 
   describe "#local_keys" do
-    include FakeFS::SpecHelpers
-
-    def write_fixture(path, contents)
-      FileUtils.mkdir_p(File.dirname(path))
+    def write_fixture(name, contents)
+      path = Tempfile.new(name).path
+      subject.stub(:default_keys).and_return([path])
       File.open(path, "w") { |f| f.write(contents) }
+      path
     end
 
-    it "returns the contents of id_rsa.pub when it exists" do
-      write_fixture(File.expand_path("~/.ssh/id_rsa.pub"), "RSA-public-key")
+    it 'has a sane default set of public keys to use' do
+      defaults = %w{id_ecdsa.pub id_dsa.pub id_rsa.pub}
+      defaults.map { |fname| File.expand_path("~/.ssh/#{fname}") }.each do |key|
+        subject.send(:default_keys).should include key
+      end
+    end
+
+    it "returns the contents of the key when it exists" do
+      write_fixture('some-key.pub', 'RSA-public-key')
       subject.send(:local_keys).should == ["RSA-public-key"]
     end
 
-    it "returns the contents of id_dsa.pub when it exists" do
-      write_fixture(File.expand_path("~/.ssh/id_dsa.pub"), "DSA-public-key")
-      subject.send(:local_keys).should == ["DSA-public-key"]
-    end
-
-    it "returns the contents of id_ecdsa.pub when it exists" do
-      write_fixture(File.expand_path("~/.ssh/id_ecdsa.pub"), "ECDSA-public-key")
-      subject.send(:local_keys).should == ["ECDSA-public-key"]
-    end
-
-    it "returns the contents of id_dsa.pub when both id_dsa.pub and id_rsa.pub exist" do
-      write_fixture(File.expand_path("~/.ssh/id_dsa.pub"), "DSA-public-key")
-      write_fixture(File.expand_path("~/.ssh/id_rsa.pub"), "RSA-public-key")
+    it "returns the contents of one key when multiple exist" do
+      dsa = write_fixture('id_dsa.pub', "DSA-public-key")
+      rsa = write_fixture('id_rsa.pub', "RSA-public-key")
+      subject.stub(:default_keys).and_return([dsa, rsa])
       subject.send(:local_keys).should == ["DSA-public-key"]
     end
 
     it "ignores trailing newlines" do
-      write_fixture(File.expand_path("~/.ssh/id_rsa.pub"), "RSA-public-key\n\n")
+      write_fixture('id_rsa.pub', "RSA-public-key\n\n")
       subject.send(:local_keys).should == ["RSA-public-key"]
     end
 
     it "ignores blank lines" do
-      write_fixture(File.expand_path("~/.ssh/id_rsa.pub"), "\n\nRSA-public-key\n\n\n")
+      write_fixture('id_rsa.pub', "\n\nRSA-public-key\n\n\n")
       subject.send(:local_keys).should == ["RSA-public-key"]
     end
   end

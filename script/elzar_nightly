@@ -24,8 +24,7 @@ rvm use "$CI_RUBY_VERSION@$CI_GEMSET"
 gem install bundler
 bundle install
 
-# DO NOT bundle exec rake - fakefs activation borks everything
-rake elzar_nightly
+bundle exec rake elzar_nightly
 
 [ $? -ne 0 ] && builtin cd $RAILS_APP && stop_server_and_exit
 

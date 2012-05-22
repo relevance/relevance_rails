@@ -1,3 +1,7 @@
+*v0.2.1*
+* Replace testing with FakeFS with tempfiles.
+* Use 'bundle exec' in script/elzar\_nightly.
+
 *v0.2.0*
 
 * Depend on slushy for provisioning
