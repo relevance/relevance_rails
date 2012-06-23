@@ -16,11 +16,7 @@ function stop_server_and_exit {
 }
 
 source "$HOME/.rvm/scripts/rvm"
-export CI_GEMSET=elzar_nightly
-# Tests and app are all running in CI_GEMSET
-export NO_RVM=true
-
-rvm use "$CI_RUBY_VERSION@$CI_GEMSET"
+rvm use "$CI_RUBY_VERSION"
 gem install bundler
 bundle install
 
