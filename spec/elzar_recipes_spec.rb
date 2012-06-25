@@ -51,6 +51,8 @@ describe "Elzar recipes", :ci => true do
   before(:all) do
     create_new_app
     Dir.chdir rails_app
+    Bundler.clean_system("bundle install")
+
     rake %[provision:ec2 NAME="#{server_name}" --trace]
   end
 
