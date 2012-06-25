@@ -9,16 +9,16 @@ module RelevanceRails
         puts "RelevanceRails #{RelevanceRails::VERSION}"
       elsif argv[0] == 'new'
         add_default_options! argv
-        if ENV['rvm_path'].nil? || ENV['NO_RVM']
+        #if ENV['rvm_path'].nil? || ENV['NO_RVM']
           exec 'rails', *argv
-        else
-          app_name = argv[1]
-          env = setup_rvm(app_name)
+        #else
+        #  app_name = argv[1]
+        #  env = setup_rvm(app_name)
 
-          new_rvm_string = "#{env.environment_name.split('@')[0]}@#{app_name}"
-          install_relevance_rails argv, new_rvm_string, env.environment_name
-          exec new_rvm_string,'-S','rails', *argv
-        end
+        #  new_rvm_string = "#{env.environment_name.split('@')[0]}@#{app_name}"
+        #  install_relevance_rails argv, new_rvm_string, env.environment_name
+        #  exec new_rvm_string,'-S','rails', *argv
+        #end
       end
     end
 

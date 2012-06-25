@@ -25,4 +25,6 @@ bundle exec rake elzar_nightly
 [ $? -ne 0 ] && builtin cd $RAILS_APP && stop_server_and_exit
 
 builtin cd $RAILS_APP
+echo "Terminated newly-created server..."
 bundle exec rake provision:destroy FORCE=true --trace 
+echo "DONE"
