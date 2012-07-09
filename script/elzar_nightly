@@ -4,13 +4,17 @@ RAILS_APP="elzar_nightly_app"
 EC2_MEMENTO_FILE="config/ec2_instance.txt"
 
 function stop_server_and_exit {
-  if [ -f $EC2_MEMENTO_FILE ]; then
-    echo "Stopping newly-created server..."
-    bundle exec rake provision:stop FORCE=true --trace
+  if [ -z "$KEEP_ON_ERROR" ]; then
+    echo "Env variable KEEP_ON_ERROR is set, so keeping failed server."
   else
-    echo "No server to stop (i.e. can't find config/ec2_instance.txt)."
-  fi  
-
+    if [ -f $EC2_MEMENTO_FILE ]; then
+      echo "Stopping newly-created server..."
+      bundle exec rake provision:stop FORCE=true --trace
+    else
+      echo "No server to stop (i.e. can't find config/ec2_instance.txt)."
+    fi  
+  fi
+  
   echo "BUILD FAILED"
   exit 1
 }
