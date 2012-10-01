@@ -1,0 +1,46 @@
+#!/usr/bin/env ruby
+require 'gli'
+begin
+  require 'relevance_rails/cli'
+rescue LoadError
+  STDERR.puts "Could not load relevance_rails"
+  exit 64
+end
+
+include GLI::App
+
+program_desc 'Opinionated Rails app generator built on Appscrolls'
+
+version RelevanceRails::VERSION
+
+desc 'Generates a new rails app with an opionated scroll stack'
+arg_name 'app_name' # TODO raise error if arg not given
+command :new do |c|
+  c.action do |global_options,options,args|
+    app_name = args.first
+    RelevanceRails::Cli::New.run(app_name, global_options.merge(options))
+  end
+end
+
+pre do |global,command,options,args|
+  # Pre logic here
+  # Return true to proceed; false to abourt and not call the
+  # chosen command
+  # Use skips_pre before a command to skip this block
+  # on that command only
+  true
+end
+
+post do |global,command,options,args|
+  # Post logic here
+  # Use skips_post before a command to skip this
+  # block on that command only
+end
+
+on_error do |exception|
+  # Error logic here
+  # return false to skip default error handling
+  true
+end
+
+exit run(ARGV)
