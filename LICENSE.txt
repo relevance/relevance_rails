@@ -1,4 +1,4 @@
-Copyright (c) 2012 Jared Pace
+Copyright (c) 2012 Relevance
 
 MIT License
 

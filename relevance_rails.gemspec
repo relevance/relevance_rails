@@ -6,10 +6,10 @@ require 'relevance_rails/version'
 Gem::Specification.new do |gem|
   gem.name          = "relevance_rails"
   gem.version       = RelevanceRails::VERSION
-  gem.authors       = ["Jared Pace"]
-  gem.email         = ["jared@codeword.io"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.authors       = ["Relevance"]
+  gem.email         = ["opensource@thinkrelevance.com"]
+  gem.description   = %q{Opinionated Rails app generator built on Appscrolls}
+  gem.summary       = %q{Opinionated Rails app generator built on Appscrolls}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($/)
