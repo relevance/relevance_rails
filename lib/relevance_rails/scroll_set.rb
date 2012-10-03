@@ -39,7 +39,8 @@ module RelevanceRails
       template_file.write template.compile
       template_file.flush
 
-      system "rails new #{app_name} -m #{template_file.path} #{template.args.flatten.map(&:strip).join(' ')}"
+      cmd = "rails new #{app_name} -m #{template_file.path} #{template.args.flatten.map(&:strip).join(' ')}"
+      defined?(Bundler) ? Bundler.clean_system(cmd) : system(cmd)
     ensure
       template_file.unlink
     end
