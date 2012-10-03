@@ -1,33 +1,34 @@
 require 'set'
 require 'enumerator'
+require 'tempfile'
 
 module RelevanceRails
   class ScrollSet
     include Enumerable
-    
-    attr_accessor :set
+
+    attr_accessor :scrolls
 
     def initialize(seed=[])
-      @set = Set.new(seed)
+      @scrolls = Set.new(seed)
       classify_scrolls!
     end
 
     def each(&block)
-      @set.each { |item| yield item }
+      @scrolls.each { |item| yield item }
     end
 
     def union_minus_intersection!(other_scrolls)
       other_scrolls = RelevanceRails::ScrollSet.new(other_scrolls)
-      @set.replace @set.union(other_scrolls).subtract(@set.intersection(other_scrolls))
+      @scrolls.replace @scrolls.union(other_scrolls).subtract(@scrolls.intersection(other_scrolls))
       classify_scrolls!
+    end
+
+    def build_template
+      AppScrollsScrolls::Template.new(@scrolls)
     end
 
     def resolved
       ScrollSet.new build_template.resolve_scrolls
-    end
-
-    def build_template
-      AppScrollsScrolls::Template.new(@set)
     end
 
     def run(app_name)
@@ -36,7 +37,7 @@ module RelevanceRails
       template_file.write template.compile
       template_file.flush
 
-      system "rails new #{app_name} -m #{template_file.path} #{template.args.join(' ')}"
+      system "rails new #{app_name} -m #{template_file.path} #{template.args.flatten.map(&:strip).join(' ')}"
     ensure
       template_file.unlink
     end
@@ -44,14 +45,14 @@ module RelevanceRails
     private
 
     def classify_scrolls!
-      unclassified_scrolls = @set.reject do |s|
+      unclassified_scrolls = @scrolls.reject do |s|
         s.respond_to?(:superclass) && s.superclass == AppScrollsScrolls::Scroll
       end
 
       unclassified_scrolls.each do |scroll|
         classified = AppScrollsScrolls::Scrolls[scroll]
-        @set.delete(scroll)
-        @set.add(classified) if classified
+        @scrolls.delete(scroll)
+        @scrolls.add(classified) if classified
       end
 
       self

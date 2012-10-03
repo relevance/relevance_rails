@@ -1,5 +1,3 @@
-require 'tempfile'
-
 module RelevanceRails
   module Cli
     class New < Runner
