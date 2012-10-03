@@ -14,51 +14,52 @@ module RelevanceRails
       end
 
       def run
-        stack_scrolls = RelevanceRails::OpinionatedStacks::Default
-        user_specified_scrolls = ask_for_user_scrolls(stack_scrolls)
-        scrolls = RelevanceRails::Scrolls.union_minus_intersection(stack_scrolls, user_specified_scrolls)
-
-        template = AppScrollsScrolls::Template.new(scrolls)
-        announce_resolved_scolls(template)
-
-        compile_and_run_template(template, options[:dry_run])
-      end
-
-      def ask_for_user_scrolls(starting_scrolls)
         say "RelevanceRails Application Generator"
         say "====================================\n\n"
-        say "Starting with the following list of opinionated scrolls:"
-        say "<%= color(list(#{starting_scrolls.inspect}, :uneven_columns_down), :green) %>\n"
+
+        scrolls = build_scroll_set
+
+        if options[:dry_run]
+          display_template scrolls
+        else
+          scrolls.run app_name
+        end
+      end
+
+      private
+
+      def build_scroll_set
+        initial_set = RelevanceRails::OpinionatedStacks::Default
+        RelevanceRails::ScrollSet.new(initial_set).tap do |scrolls|
+          until user_confirmed_scrolls?(scrolls)
+            scrolls.union_minus_intersection!(ask_user_for_scrolls)
+          end
+        end
+      end
+
+      def user_confirmed_scrolls?(scrolls)
+        say "The generator will run the following scrolls:"
+        resolved_scrolls = scrolls.resolved.map do |resolved_scroll|
+          color = scrolls.include?(resolved_scroll) ? 'green' : 'yellow'
+          "<%= color(#{resolved_scroll.key.inspect}, :#{color}) %%>"
+        end
+
+        say "<%= list(#{resolved_scrolls.inspect}, :uneven_columns_down) %>\n"
+        agree "Is this correct? (yes/no)"
+      end
+
+      def ask_user_for_scrolls
         ask("What scrolls would you like to add/remove from the list?", String) do |question|
           question.gather = ""
         end
       end
 
-      def announce_resolved_scolls(template)
-        say "\nGenerating an app with the following scrolls:"
-        resolved_scrolls = template.resolve_scrolls.map do |scroll|
-          color = template.scrolls.include?(scroll) ? 'green' : 'yellow'
-          "<%= color(#{scroll.key.inspect}, :#{color}) %%>"
-        end
-
-        say "<%= list(#{resolved_scrolls.inspect}, :uneven_columns_down) %>\n"
+      def display_template(scrolls)
+        say "Compiled Template"
+        say "=" * 40
+        say scrolls.build_template.compile
       end
 
-      def compile_and_run_template(template, display_only=false)
-        template_file = Tempfile.new('relevance-rails-template')
-        template_file.write template.compile
-        template_file.flush
-
-        if display_only
-          puts "Compiled Template"
-          puts "=" * 40
-          puts template_file.rewind && template_file.read
-        else
-          system "rails new #{app_name} -m #{template_file.path} #{template.args.join(' ')}"
-        end
-      ensure
-        template_file.unlink
-      end
     end
   end
 end
