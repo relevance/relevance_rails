@@ -13,7 +13,7 @@ program_desc 'Opinionated Rails app generator built on Appscrolls'
 
 version RelevanceRails::VERSION
 
-desc 'Generates a new rails app with an opionated scroll stack'
+desc 'Generates a new rails app with an opinionated scroll stack'
 arg_name 'app_name' # TODO raise error if arg not given
 command :new do |c|
   c.desc "Don't run the template, just display it"
