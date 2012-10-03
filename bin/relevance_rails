@@ -2,8 +2,8 @@
 require 'gli'
 begin
   require 'relevance_rails/cli'
-rescue LoadError
-  STDERR.puts "Could not load relevance_rails"
+rescue LoadError => e
+  STDERR.puts e.message
   exit 64
 end
 

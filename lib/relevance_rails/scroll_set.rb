@@ -24,7 +24,9 @@ module RelevanceRails
     end
 
     def build_template
-      AppScrollsScrolls::Template.new(@scrolls)
+      temp = AppScrollsScrolls::Template.new(@scrolls)
+      puts "temp root: #{temp.class.template_root}"
+      temp
     end
 
     def resolved
