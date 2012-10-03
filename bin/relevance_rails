@@ -16,6 +16,9 @@ version RelevanceRails::VERSION
 desc 'Generates a new rails app with an opionated scroll stack'
 arg_name 'app_name' # TODO raise error if arg not given
 command :new do |c|
+  c.desc "Don't run the template, just display it"
+  c.switch [:d, :dry_run]
+
   c.action do |global_options,options,args|
     app_name = args.first
     RelevanceRails::Cli::New.run(app_name, global_options.merge(options))

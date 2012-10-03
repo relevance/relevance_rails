@@ -1,5 +1,13 @@
-require "relevance_rails/version"
+require 'pathname'
+require 'appscrolls'
+require 'relevance_rails/version'
+require 'relevance_rails/opinionated_stacks'
+require 'relevance_rails/scrolls'
 
 module RelevanceRails
-  # Your code goes here...
+  def self.root
+    @root ||= Pathname.new File.expand_path('../..', __FILE__)
+  end
 end
+
+RelevanceRails::Scrolls.load_scrolls
