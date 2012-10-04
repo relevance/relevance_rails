@@ -1,5 +1,6 @@
 require 'pathname'
 require 'appscrolls'
+require 'active_support/all'
 require 'relevance_rails/ext/appscrolls/template'
 require 'relevance_rails/version'
 require 'relevance_rails/opinionated_stacks'
