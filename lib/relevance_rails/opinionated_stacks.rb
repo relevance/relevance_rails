@@ -11,6 +11,7 @@ module RelevanceRails
       haml
       jquery
       postgresql
+      pry
       rails_bootstrap
       sample_data
       rspec
