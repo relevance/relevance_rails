@@ -9,6 +9,7 @@ module RelevanceRails
       guard
       git
       haml
+      jquery
       postgresql
       rails_bootstrap
       rspec
