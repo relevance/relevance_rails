@@ -12,6 +12,7 @@ module RelevanceRails
       jquery
       postgresql
       rails_bootstrap
+      sample_data
       rspec
     )
 
