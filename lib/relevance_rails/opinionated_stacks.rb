@@ -4,6 +4,7 @@ module RelevanceRails
     Default = %w(
       active_admin
       capybara
+      compass
       devise
       factory_girl
       guard
