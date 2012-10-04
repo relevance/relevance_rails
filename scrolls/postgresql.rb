@@ -19,7 +19,7 @@ args: [--database=postgresql]
 config:
   - pg_username:
       type: string
-      prompt: "Local development PostgreSQL username:"
+      prompt: "Local development PostgreSQL username (e.g postgres):"
   - pg_password:
       type: string
       prompt: "Local development PostgreSQL password:"
