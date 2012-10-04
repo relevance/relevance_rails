@@ -9,7 +9,7 @@ if config['convert_erb']
   end
 end
 
-after_bundler do
+after_everything do
   if config['convert_erb']
     Dir['app/views/**/*.erb'].each do |path_to_erb|
       say_wizard "Converting ERB to Haml: #{path_to_erb}"
