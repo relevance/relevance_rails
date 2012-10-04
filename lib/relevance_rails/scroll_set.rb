@@ -37,13 +37,16 @@ module RelevanceRails
       template_file.write template.compile
       template_file.flush
 
-      cmd = "rails new #{app_name} -m #{template_file.path} #{template.args.flatten.map(&:strip).join(' ')}"
-      defined?(Bundler) ? Bundler.clean_system(cmd) : system(cmd)
+      system "rails new #{app_name} -m #{template_file.path} #{template.args.flatten.map(&:strip).join(' ')}"
     ensure
       template_file.unlink
     end
 
     private
+
+    def system(cmd)
+      defined?(Bundler) ? Bundler.clean_system(cmd) : Kernel.system(cmd)
+    end
 
     def classify_scrolls!
       unclassified_scrolls = @scrolls.reject do |s|
