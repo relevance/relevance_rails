@@ -1,4 +1,6 @@
-gem 'factory_girl_rails', :group => [:development, :test]
+gem_group :development, :test do
+  gem 'factory_girl_rails'
+end
 
 after_bundler do
   run 'mkdir -p spec/factories'
