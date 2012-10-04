@@ -1,24 +1,43 @@
 # RelevanceRails
 
-TODO: Write a gem description
+Rails application generator built on [AppScrolls](http://appscrolls.org/).
+Ships with a stack of opinionated srolls to run by default.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'relevance_rails'
+    gem install relevance_rails
 
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install relevance_rails
 
 ## Usage
 
-TODO: Write usage instructions here
+### Listing Available Scrolls
+
+    relevance_rails scrolls
+
+### Viewing the Compiled Template
+
+    relevance_rails new my_app --dry_run
+
+### Generating a Rails App
+
+    relevance_rails new my_app
+
+## Development
+
+### Running the test suite
+
+    bundle install
+    rake spec
+
+### Running the local binary
+
+    bundle exec bin/relevance_rails
+
+### Installing the Gem locally
+
+    rake install
 
 ## Contributing
 
