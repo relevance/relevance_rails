@@ -4,7 +4,12 @@
 @before_configs["<%= key %>"].call if @before_configs["<%= key %>"]
 say_scroll '<%= name %>'
 
-<%= config.compile if config %>
+<% if config %>
+<%= config.compile %>
+<% else %>
+config = {}
+<% end %>
+
 @configs[@current_scroll] = config
 
 <%= template %>

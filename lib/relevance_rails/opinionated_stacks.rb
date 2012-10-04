@@ -3,8 +3,14 @@ module RelevanceRails
 
     Default = %w(
       active_admin
+      devise
+      factory_girl
+      guard
+      git
       haml
       postgresql
+      rails_bootstrap
+      rspec
     )
 
   end

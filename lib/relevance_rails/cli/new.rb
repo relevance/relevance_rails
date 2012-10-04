@@ -42,7 +42,7 @@ module RelevanceRails
           "<%= color(#{resolved_scroll.key.inspect}, :#{color}) %%>"
         end
 
-        say "<%= list(#{resolved_scrolls.inspect}, :uneven_columns_down) %>\n"
+        say "<%= list(#{resolved_scrolls.inspect}, :uneven_columns_across) %>\n"
         agree "Is this correct? (yes/no)"
       end
 

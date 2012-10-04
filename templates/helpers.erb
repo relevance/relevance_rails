@@ -47,15 +47,6 @@ def after_everything(&block); @after_everything_blocks << [@current_scroll, bloc
 def before_config(&block); @before_configs[@current_scroll] = block; end
 
 def git_commit(message)
-  `git add .`
+  `git add --all .`
   `git commit -m "#{message}"`
-end
-
-def execute_block(block)
-  config = @configs[block[0]] || {}
-  @current_scroll = block[0];
-
-  inside destination_root do
-    block[1].call
-  end
 end
