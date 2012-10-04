@@ -72,7 +72,7 @@ describe RelevanceRails::ScrollSet do
 
     it 'runs rails app generator with the specified options' do
       template_file.stub(:path).and_return '/tmp/foo_bar_template'
-      scroll_set.should_receive(:system).with('rails new foo_bar -m /tmp/foo_bar_template -d postgresql')
+      scroll_set.should_receive(:system).with('rails new foo_bar -m /tmp/foo_bar_template --database=postgresql')
       scroll_set.run 'foo_bar'
     end
   end
