@@ -1,0 +1,24 @@
+Techdebt
+========
+
+
+## Scroll dependency ordering is broken
+
+AppScrolls uses the <=> operator to sort scrolls. This is suppossed to
+ensure that the each scroll is ordered according to their before_run and
+after_run settings.
+
+The problem with this approach is that <=> only
+compares siblings. If a scroll has a dependency but it's immediate
+neighbors are not part of that dependency chain and the scrolls are
+alreay in alpha order then no sorting will occur.
+
+Instead the scrolls should be kept in a linkes list and when comparing
+all scrolls that come before/after a given scroll should be considered
+to see where in the run list the scroll must be inserted.
+
+This would be a pretty significant change to AppScrolls. Given that we
+are only using AppScrolls for loading scrolls, doing dependency
+management and generating the template, I suggest that when we tackle
+this issue we just go ahead and ditch AppScrolls completely. It's
+codebase has been abandoned and is in an unreliable state.
