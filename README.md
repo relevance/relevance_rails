@@ -1,7 +1,7 @@
 # RelevanceRails
 
 Rails application generator built on [AppScrolls](http://appscrolls.org/).
-Ships with a stack of opinionated srolls to run by default.
+Ships with a stack of opinionated scrolls to run by default.
 
 ## Installation
 
